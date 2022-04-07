@@ -1,5 +1,5 @@
 import "next-auth";
-import { UserEntity } from "./entities";
+import { UserEntity } from "./user";
 
 declare module "next-auth" {
   /**

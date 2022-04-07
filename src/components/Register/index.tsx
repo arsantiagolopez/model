@@ -19,7 +19,7 @@ const Register: FC<Props> = ({ providers }) => {
 
   return (
     <div className="flex flex-col h-full items-center justify-center">
-      <h1 className="font-Basic text-white text-3xl tracking-tight py-6">
+      <h1 className="font-Signika text-white text-3xl tracking-tight py-6">
         Create an account.
       </h1>
 

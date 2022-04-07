@@ -12,7 +12,7 @@ module.exports = {
         fourth: colors.gray[300],
       },
       fontFamily: {
-        Basic: ["Basic", "sans-serif"],
+        Signika: ["Signika Negative", "sans-serif"],
       },
       display: ["group-hover"],
     },

@@ -1,7 +1,6 @@
 import { useSession } from "next-auth/react";
 import React, { FC } from "react";
 import { Authenticated } from "./Authenticated";
-import { NotAuthenticated } from "./NotAuthenticated";
 
 interface Props {}
 
@@ -12,11 +11,11 @@ const Navigation: FC<Props> = () => {
 
   const authenticatedProps = { session };
 
-  return isAuthenticated ? (
-    <Authenticated {...authenticatedProps} />
-  ) : (
-    <NotAuthenticated />
-  );
+  if (isAuthenticated) {
+    return <Authenticated {...authenticatedProps} />;
+  }
+
+  return null;
 };
 
 export { Navigation };

@@ -1,18 +1,46 @@
-export interface TournamentMatch {
-  tournament: string;
-  type: string;
-  round: string;
-  startTime: string;
-  match: string;
-  homeOdds: number;
-  awayOdds: number;
-  matchLink: string;
+import { PlayerStatsEntity } from ".";
+import { MatchEntity } from "./match";
+
+export interface PlayerEntity {
+  _id?: string;
+  playerId: string;
+  profile: PlayerProfile;
+  form?: number;
+  streak?: number;
+  record: PlayerRecord;
+  lastMatches: MatchEntity[];
+  upcomingMatch?: MatchEntity;
+  pastTournamentResults: PastTournamentResult[];
+  injuries: Injury[];
+  playerStats: PlayerStatsEntity;
 }
 
-export interface PastTournamentResult {
-  tournament: string;
-  year: number;
-  result: string;
+export interface PlayerProfile {
+  name?: string;
+  image?: string;
+  country?: string;
+  height?: string;
+  age?: number;
+  birthday?: Date | string;
+  singlesRank?: number;
+  // doublesRank?: number;
+  sex?: string;
+  hand?: string;
+}
+
+export interface PlayerRecord {
+  years: YearRecord[];
+  all: YearRecord;
+}
+
+export interface YearRecord {
+  year?: number;
+  yearLink?: string;
+  summary: WinLossRecord;
+  clay: WinLossRecord;
+  hard: WinLossRecord;
+  indoors: WinLossRecord;
+  grass: WinLossRecord;
 }
 
 export interface WinLossRecord {
@@ -20,57 +48,16 @@ export interface WinLossRecord {
   loss: number;
 }
 
-export interface PlayerRecord {
-  type: string;
+export interface PastTournamentResult {
+  tournamentId: string;
   year: number;
-  totalSummary: string;
-  totalRecord: WinLossRecord;
-  claySummary: string;
-  clayRecord: WinLossRecord;
-  hardSummary: string;
-  hardRecord: WinLossRecord;
-  indoorsSummary: string;
-  indoorsRecord: WinLossRecord;
-  grassSummary: string;
-  grassRecord: WinLossRecord;
-}
-
-export interface PlayedMatch {
-  country: string;
-  type: string;
-  tournament: string;
-  startTime: Date;
-  surface: string;
-  opponentId: string;
-  opponent: string;
-  round: string;
   result: string;
-  resultSummary: string;
-  playerOdds: number;
-  opponentOdds: number;
-  matchLink: string;
+  matches: MatchEntity[];
 }
 
 export interface Injury {
-  startDate: Date;
-  endDate: Date;
+  startDate: Date | string;
+  endDate: Date | string;
   tournament: string;
   reason: string;
-}
-
-export interface PlayerEntity {
-  _id: string;
-  platformId: string;
-  name: string;
-  image: string;
-  country: string;
-  age: number;
-  singlesRank: number;
-  doublesRank: number;
-  hand: string;
-  currentTournamentResults: TournamentMatch[];
-  pastTournamentResults: PastTournamentResult[];
-  yearlyPlayerRecord: PlayerRecord[];
-  lastMatches: PlayedMatch[];
-  injuries: Injury[];
 }

@@ -18,7 +18,7 @@ const SignIn: FC<Props> = ({ providers }) => {
     Object.values(providers).filter(({ type }) => type !== "email");
 
   return (
-    <div className="flex flex-col h-full items-center justify-center">
+    <div className="flex flex-col h-full items-center justify-center min-h-[75vh]">
       <h1 className="font-Signika text-white text-3xl tracking-tight py-6">
         Let&apos;s get you in.
       </h1>
@@ -29,10 +29,10 @@ const SignIn: FC<Props> = ({ providers }) => {
             key={id}
             onClick={() =>
               signIn(id, {
-                callbackUrl: `${process.env.NEXTAUTH_URL}`,
+                callbackUrl: `${process.env.NEXT_PUBLIC_API_URL}`,
               })
             }
-            className={`button py-3 px-10 w-fit flex flex-row items-center ${
+            className={`font-Signika text-white bg-secondary hover:bg-tertiary rounded-full py-3 px-10 w-fit flex flex-row items-center ${
               Object.values(socialProviders).length - 1 !== index && "mb-2"
             }`}
           >

@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import Head from "next/head";
 import React from "react";
 import { Layout } from "../components/Layout";
@@ -7,6 +8,11 @@ import { AdminPage } from "../types";
 interface Props {}
 
 const TestsPage: AdminPage<Props> = () => {
+  const { data } = useSession();
+
+  const isAdmin = !!data?.user?.isAdmin;
+
+  const layoutProps = { isAdmin };
   const testsProps = {};
 
   return (
@@ -15,7 +21,7 @@ const TestsPage: AdminPage<Props> = () => {
         <title>Tests | {process.env.NEXT_PUBLIC_BRAND_NAME}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout>
+      <Layout {...layoutProps}>
         <Tests {...testsProps} />
       </Layout>
     </>

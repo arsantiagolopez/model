@@ -9,12 +9,15 @@ module.exports = {
         primary: "#1f1f1f",
         secondary: "#252525",
         tertiary: "#292929",
-        fourth: colors.gray[300],
+        fourth: colors.gray[400],
       },
       fontFamily: {
         Signika: ["Signika Negative", "sans-serif"],
       },
       display: ["group-hover"],
+      animation: {
+        "spin-slow": "spin 5s linear infinite",
+      },
     },
   },
 };

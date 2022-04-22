@@ -7,26 +7,25 @@ import { Landing } from "../components/Landing";
 import { Layout } from "../components/Layout";
 
 const IndexPage: NextPage = () => {
-  const { data: session, status } = useSession();
+  const { data } = useSession();
 
-  const authenticated = session && status !== "loading";
-  const title = authenticated ? "Dashboard" : "Home";
+  const isAdmin = !!data?.user?.isAdmin;
 
-  if (status !== "loading") {
-    return (
-      <>
-        <Head>
-          <title>
-            {title} | {process.env.NEXT_PUBLIC_BRAND_NAME}
-          </title>
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <Layout>{authenticated ? <Dashboard /> : <Landing />}</Layout>
-      </>
-    );
-  }
+  const title = data?.user?.isAdmin ? "Dashboard" : "Home";
 
-  return <></>;
+  const layoutProps = { isAdmin };
+
+  return (
+    <>
+      <Head>
+        <title>
+          {title} | {process.env.NEXT_PUBLIC_BRAND_NAME}
+        </title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Layout {...layoutProps}>{isAdmin ? <Dashboard /> : <Landing />}</Layout>
+    </>
+  );
 };
 
 export default IndexPage;

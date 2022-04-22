@@ -5,11 +5,7 @@ const { model, models, Schema } = mongoose;
 
 const MatchSchema = new Schema<MatchEntity>(
   {
-    startTime: {
-      type: Date,
-      required: true,
-    },
-    type: {
+    matchId: {
       type: String,
       required: true,
     },
@@ -17,13 +13,41 @@ const MatchSchema = new Schema<MatchEntity>(
       type: String,
       required: true,
     },
-    homeId: {
+    tournamentId: {
       type: String,
       required: true,
     },
-    awayId: {
+    tournamentLink: {
       type: String,
       required: true,
+    },
+    year: {
+      type: Number,
+      required: false,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    surface: {
+      type: String,
+      required: false,
+    },
+    round: {
+      type: String,
+      required: false,
+    },
+    date: {
+      type: Schema.Types.Mixed,
+      required: false,
+    },
+    homeLink: {
+      type: String,
+      required: false,
+    },
+    awayLink: {
+      type: String,
+      required: false,
     },
     home: {
       type: String,
@@ -33,20 +57,36 @@ const MatchSchema = new Schema<MatchEntity>(
       type: String,
       required: true,
     },
-    h2hHome: {
-      type: Number,
-      required: true,
-    },
-    h2hAway: {
-      type: Number,
-      required: true,
-    },
-    homeOdds: {
+    homeH2h: {
       type: Number,
       required: false,
     },
+    awayH2h: {
+      type: Number,
+      required: false,
+    },
+    homeOdds: {
+      type: Number,
+      required: true,
+    },
     awayOdds: {
       type: Number,
+      required: true,
+    },
+    matchLink: {
+      type: String,
+      required: true,
+    },
+    result: {
+      type: Schema.Types.Mixed,
+      required: false,
+    },
+    odds: {
+      type: Schema.Types.Mixed,
+      required: false,
+    },
+    headToHeadMatches: {
+      type: Schema.Types.Mixed,
       required: false,
     },
   },

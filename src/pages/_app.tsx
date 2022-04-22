@@ -4,6 +4,8 @@ import { SessionProvider } from "next-auth/react";
 import type { AppProps as NextAppProps } from "next/app";
 import { SWRConfig } from "swr";
 import { AdminRoute } from "../components/AdminRoute";
+import { PreferencesProvider } from "../context/PreferencesProvider";
+import { TestsProvider } from "../context/TestsProvider";
 import "../styles/globals.css";
 
 interface IsAdminProp {
@@ -12,7 +14,7 @@ interface IsAdminProp {
 
 // Custom type to override Component type
 type AppProps<P = any> = {
-  Component: NextComponentType<NextPageContext, any, {}> & IsAdminProp;
+  Component: NextComponentType<NextPageContext, any, {}> & IsAdminProp & any;
 } & Omit<NextAppProps<P>, "Component">;
 
 const MyApp: NextPage<AppProps> = ({
@@ -25,13 +27,17 @@ const MyApp: NextPage<AppProps> = ({
         fetcher: (url) => axios(url).then((res) => res.data),
       }}
     >
-      {Component.isAdmin ? (
-        <AdminRoute>
-          <Component {...pageProps} />
-        </AdminRoute>
-      ) : (
-        <Component {...pageProps} />
-      )}
+      <PreferencesProvider>
+        <TestsProvider>
+          {Component.isAdmin ? (
+            <AdminRoute>
+              <Component {...pageProps} />
+            </AdminRoute>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </TestsProvider>
+      </PreferencesProvider>
     </SWRConfig>
   </SessionProvider>
 );

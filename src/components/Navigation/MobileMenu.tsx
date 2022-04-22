@@ -49,7 +49,7 @@ const MobileMenu: FC<Props> = ({ isMenuOpen, setIsMenuOpen }) => {
               leaveTo="opacity-0 scale-95"
             >
               <div className="z-50 flex flex-col items-start w-full p-4 pt-28 text-left transition-all transform font-Signika text-3xl leading-loose text-secondary">
-                <Link href="/">
+                <Link href="/dashboard">
                   <button className="font-Signika text-white">Dashboard</button>
                 </Link>
                 <Link href="/settings">

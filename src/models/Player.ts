@@ -5,65 +5,39 @@ const { model, models, Schema } = mongoose;
 
 const PlayerSchema = new Schema<Partial<PlayerEntity>>(
   {
-    playerId: {
+    platformId: {
       type: String,
       required: true,
     },
-    profile: {
-      name: {
-        type: String,
-        required: true,
-      },
-      image: {
-        type: String,
-        required: true,
-      },
-      country: {
-        type: String,
-        required: true,
-      },
-      age: {
-        type: Number,
-        required: true,
-      },
-      birthday: {
-        type: Date,
-        required: true,
-      },
-      singlesRank: {
-        type: Number,
-        required: true,
-      },
-      // doublesRank: {
-      //   type: Number,
-      //   required: true,
-      // },
-      sex: {
-        type: String,
-        required: true,
-      },
-      hand: {
-        type: String,
-        required: true,
-      },
+    name: {
+      type: String,
+      required: true,
     },
-    record: {
-      type: Schema.Types.Mixed,
-      required: false,
+    image: {
+      type: String,
+      required: true,
     },
-    form: {
+    country: {
+      type: String,
+      required: true,
+    },
+    age: {
       type: Number,
-      required: false,
+      required: true,
     },
-    streak: {
+    singlesRank: {
       type: Number,
-      required: false,
+      required: true,
     },
-    lastMatches: {
-      type: Schema.Types.Mixed,
-      required: false,
+    doublesRank: {
+      type: Number,
+      required: true,
     },
-    upcomingMatch: {
+    hand: {
+      type: String,
+      required: true,
+    },
+    currentTournamentResults: {
       type: Schema.Types.Mixed,
       required: false,
     },
@@ -71,12 +45,11 @@ const PlayerSchema = new Schema<Partial<PlayerEntity>>(
       type: Schema.Types.Mixed,
       required: false,
     },
-    injuries: {
+    lastMatches: {
       type: Schema.Types.Mixed,
       required: false,
     },
-    playerStats: {
-      ref: "PlayerStats",
+    injuries: {
       type: Schema.Types.Mixed,
       required: false,
     },

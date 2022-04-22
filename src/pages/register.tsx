@@ -8,7 +8,7 @@ import {
 import Head from "next/head";
 import React from "react";
 import { Layout } from "../components/Layout";
-import { SignIn } from "../components/SignIn";
+import { Register } from "../components/Register";
 
 interface Props {
   providers: Record<
@@ -17,17 +17,17 @@ interface Props {
   > | null;
 }
 
-const SignInPage: NextPage<Props> = ({ providers }) => {
-  const signInProps = { providers };
+const RegisterPage: NextPage<Props> = ({ providers }) => {
+  const registerProps = { providers };
 
   return (
     <>
       <Head>
-        <title>Sign In | {process.env.NEXT_PUBLIC_BRAND_NAME}</title>
+        <title>Register | {process.env.NEXT_PUBLIC_BRAND_NAME}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <SignIn {...signInProps} />
+        <Register {...registerProps} />
       </Layout>
     </>
   );
@@ -40,4 +40,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
   };
 };
 
-export default SignInPage;
+export default RegisterPage;

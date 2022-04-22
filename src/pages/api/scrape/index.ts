@@ -1,71 +1,89 @@
+import moment from "moment";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
-import { Match } from "../../../models/Match";
-import { Player } from "../../../models/Player";
-import { PlayerStats } from "../../../models/PlayerStats";
-import { Tournament } from "../../../models/Tournament";
+import { Post } from "../../../models/Post";
+import { scrapeReddit } from "../../../puppeteer";
+import { PostEntity } from "../../../types";
+import { convertPastToDate } from "../../../utils/convertPastToDate";
 import { dbConnect } from "../../../utils/dbConnect";
-import { resetTests } from "../tests";
-import {
-  upsertMatches,
-  upsertPlayers,
-  upsertSchedule,
-  upsertTournaments,
-} from "./[id]";
 
-/**
- * Scrape tomorrow's data & update database.
- * @param req - HTTP request.
- * @param res - HTTP response.
- * @returns a success boolean.
- */
-const scrapeTomorrow = async (
+// Scrape recent posts from all platforms
+const scrapeAll = async (
   _: NextApiRequest,
   res: NextApiResponse
-): Promise<boolean | void> => {
-  let success = true;
-
+): Promise<PostEntity[] | void> => {
   try {
-    // Reset all tests
-    await resetTests();
+    const redditPosts = await fetchRedditPosts();
 
-    // Delete previous entities
-    await Promise.all([
-      Match.deleteMany(),
-      Tournament.deleteMany(),
-      Player.deleteMany(),
-      PlayerStats.deleteMany(),
-    ]);
+    // Create post entities
+    for await (const post of redditPosts) {
+      let { platformId, timestamp } = post;
 
-    // Scrape schedule
-    success = await upsertSchedule();
+      // Create timestamp from date
+      timestamp = moment(convertPastToDate(timestamp)).format("LLLL");
 
-    if (!success) return success;
+      await Post.findOneAndUpdate(
+        { platformId },
+        {
+          ...post,
+          timestamp,
+        },
+        {
+          upsert: true,
+        }
+      );
+    }
 
-    // Scrape tournaments
-    success = await upsertTournaments();
-    if (!success) return success;
+    // Only keep last 100
 
-    // Scrape matches
-    success = await upsertMatches();
-    if (!success) return success;
-
-    // Scrape players
-    success = await upsertPlayers();
-    if (!success) return success;
-
-    // // Scrape stats
-    // success = await upsertStats();
-    // if (!success) return success;
-
-    // All data should be scrape by now
-
-    return res.status(200).json(success);
+    return res.status(200).json(redditPosts);
   } catch (error) {
-    success = false;
     console.log(error);
-    return res.status(400).json(success);
+    return res.status(400).json({ message: error });
   }
+};
+
+// // Scrape test with github cron jobs
+// const scrapeTest = async (_: NextApiRequest, res: NextApiResponse) => {
+//   try {
+//     const now = moment(new Date()).format("h:mm A");
+
+//     console.log(`RUNNING CRON JOB NOW: ${now}`);
+
+//     return res.status(200).json(`Successful at ${now}`);
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(405).json(error);
+//   }
+// };
+
+// Scrape reddit comments & save posts to database
+const fetchRedditPosts = async (): Promise<PostEntity[]> => {
+  let posts: PostEntity[] = [];
+
+  posts = await scrapeReddit();
+
+  return posts;
+};
+
+// Scrape twitter comments & save posts to database
+const fetchTwitterPosts = async (): Promise<PostEntity[]> => {
+  let posts: PostEntity[] = [];
+
+  const now = moment(new Date()).format("h:mm A");
+  console.log(`*** CALLED AT ${now}`);
+
+  return posts;
+};
+
+// Scrape instagram comments & save posts to database
+const fetchInstagramPosts = async (): Promise<PostEntity[]> => {
+  let posts: PostEntity[] = [];
+
+  const now = moment(new Date()).format("h:mm A");
+  console.log(`*** CALLED AT ${now}`);
+
+  return posts;
 };
 
 // Main
@@ -73,17 +91,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const data = await getSession({ req });
   const { method } = req;
 
-  const isAdmin = data?.user.isAdmin;
+  const userId = data?.user.id;
+  // const isAdmin = data?.user.isAdmin;
 
   await dbConnect();
 
+  // @ts-ignore
+  const { ACTION_KEY } = req.headers.authorization?.split(" ")[1] || {};
+
   switch (method) {
     case "POST":
-      if (!isAdmin) {
-        return res.status(405).end("Must be an admin to run the model.");
+      // @todo Decide whether any user can fetch, or only admins, or public
+
+      // If regular cron job or if authenticated user
+      if (ACTION_KEY === process.env.APP_KEY || !!userId) {
+        console.log("in hea");
+        // return scrapeTest(req, res);
+        return scrapeAll(req, res);
+      } else {
+        return res.status(401);
       }
-      // Scrape all of tomorrow's data
-      return scrapeTomorrow(req, res);
     default:
       return res
         .status(405)
@@ -91,4 +118,5 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
+export { fetchRedditPosts, fetchTwitterPosts, fetchInstagramPosts };
 export default handler;

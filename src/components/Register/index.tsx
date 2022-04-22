@@ -10,7 +10,7 @@ interface Props {
   > | null;
 }
 
-const SignIn: FC<Props> = ({ providers }) => {
+const Register: FC<Props> = ({ providers }) => {
   const BRAND_NAME = process.env.NEXT_PUBLIC_BRAND_NAME;
 
   const socialProviders =
@@ -20,7 +20,7 @@ const SignIn: FC<Props> = ({ providers }) => {
   return (
     <div className="flex flex-col h-full items-center justify-center">
       <h1 className="font-Signika text-white text-3xl tracking-tight py-6">
-        Let&apos;s get you in.
+        Create an account.
       </h1>
 
       {socialProviders &&
@@ -44,7 +44,7 @@ const SignIn: FC<Props> = ({ providers }) => {
                 <FaFacebookF />
               ) : null}
             </p>
-            Sign in with {name}
+            Register with {name}
           </button>
         ))}
 
@@ -56,4 +56,4 @@ const SignIn: FC<Props> = ({ providers }) => {
   );
 };
 
-export { SignIn };
+export { Register };

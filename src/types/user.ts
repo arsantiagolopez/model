@@ -7,6 +7,5 @@ export interface UserEntity {
   emailVerified: Date;
   image: string;
   isAdmin: boolean;
-  isSuperAdmin?: boolean;
   createdAt: Date;
 }

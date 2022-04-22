@@ -1,59 +1,59 @@
 import mongoose from "mongoose";
-import { MatchEntity } from "../types";
+import { PostEntity } from "../types";
 
 const { model, models, Schema } = mongoose;
 
-const MatchSchema = new Schema<MatchEntity>(
+const PostSchema = new Schema<PostEntity>(
   {
-    startTime: {
-      type: Date,
-      required: true,
-    },
-    type: {
+    platformId: {
       type: String,
       required: true,
     },
-    tournament: {
+    platform: {
       type: String,
       required: true,
     },
-    homeId: {
+    image: {
       type: String,
       required: true,
     },
-    awayId: {
+    username: {
       type: String,
       required: true,
     },
-    home: {
+    message: {
       type: String,
       required: true,
     },
-    away: {
+    messageHtml: {
+      type: String,
+      required: false,
+    },
+    timestamp: {
       type: String,
       required: true,
     },
-    h2hHome: {
-      type: Number,
-      required: true,
-    },
-    h2hAway: {
-      type: Number,
-      required: true,
-    },
-    homeOdds: {
+    likes: {
       type: Number,
       required: false,
     },
-    awayOdds: {
+    comments: {
       type: Number,
       required: false,
+    },
+    link: {
+      type: String,
+      required: false,
+    },
+    isHidden: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
 );
 
 // Prevent model overwrite upon initial compile
-const Match = models.Match || model<MatchEntity>("Match", MatchSchema);
+const Post = models.Post || model<PostEntity>("Post", PostSchema);
 
-export { Match };
+export { Post };

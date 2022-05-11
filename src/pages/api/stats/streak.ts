@@ -9,6 +9,7 @@ import { dbConnect } from "../../../utils/dbConnect";
  * Streaks must be of at least 3 wins.
  * @param req - HTTP Request object.
  * @param res - HTTP Response object.
+ * @returns an array of players.
  */
 const getWinStreaks = async (
   _: NextApiRequest,

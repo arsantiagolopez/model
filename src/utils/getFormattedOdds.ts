@@ -1,11 +1,9 @@
 // Format odds based on global state
 
-import { useContext } from "react";
-import { PreferencesContext } from "../context/PreferencesContext";
-
-const getFormattedOdds = (odds?: number): string | undefined => {
-  const { oddsFormat } = useContext(PreferencesContext);
-
+const getFormattedOdds = (
+  odds?: number,
+  oddsFormat?: string
+): string | undefined => {
   // Convert odds to american format
   const convertToAmerican = (odds: number): number => {
     if (odds >= 2) {

@@ -17,6 +17,7 @@ interface TournamentHash {
  * Get all the players playing in ther home country.
  * @param req - HTTP Request object.
  * @param res - HTTP Response object.
+ * @returns an array of players and their respective countries.
  */
 const getPlayersPlayingInTheirCountry = async (
   _: NextApiRequest,

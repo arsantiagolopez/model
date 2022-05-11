@@ -1,7 +1,8 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import { MatchEntity, PlayerProfile } from "../../../types";
 import { getLastAndFirstInitial } from "../../../utils/getLastAndFirstInitial";
+import { Avatar } from "../../Avatar";
 import { SurfaceBadge } from "../../SurfaceBadge";
 
 interface Props {
@@ -20,10 +21,10 @@ const Head2Head: FC<Props> = ({ match, homeProfile, awayProfile }) => {
 
   const toggleActive = () => setIsPanelOpen(!isPanelOpen);
 
-  useEffect(() => {
-    if (match) {
-    }
-  }, [match]);
+  const isFacedEachOther = Number(homeH2h) + Number(awayH2h) !== 0;
+
+  const homeAvatarProps = { image: homeImage, width: "2.25rem" };
+  const awayAvatarProps = { image: awayImage, width: "2.25rem" };
 
   return (
     <div
@@ -42,35 +43,27 @@ const Head2Head: FC<Props> = ({ match, homeProfile, awayProfile }) => {
       {/* Summary H2H */}
       <div className="flex flex-row justify-between items-center px-4">
         {/* Home */}
-        <div className="flex flex-row justify-center items-center">
-          <img
-            src={homeImage}
-            className={`object-cover h-9 w-9 min-h-[2.25rem] min-w-[2.25rem] rounded-full ${
-              !homeImage && "bg-primary animate-pulse"
-            }`}
-          />
-          <div className="flex flex-col justify-start text-white">
+        <div className="flex flex-row justify-start items-center max-w-[50%] truncate">
+          <Avatar {...homeAvatarProps} />
+
+          <div className="flex flex-col justify-start text-white max-w-[65%] md:max-w-[100%]">
             <p className="text-base font-bold ml-2">{homeH2h}</p>
-            <p className="ml-2">
+            <p className="ml-2 truncate text-left">
               {homeName && getLastAndFirstInitial(homeName)}
             </p>
           </div>
         </div>
 
         {/* Away */}
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex flex-col justify-start text-white">
+        <div className="flex flex-row justify-end items-center max-w-[50%]">
+          <div className="flex flex-col justify-end text-white max-w-[65%] md:max-w-[100%] truncate">
             <p className="text-right text-base font-bold mr-2">{awayH2h}</p>
-            <p className="mr-2">
+            <p className="mr-2 truncate text-right">
               {awayName && getLastAndFirstInitial(awayName)}
             </p>
           </div>
-          <img
-            src={awayImage}
-            className={`object-cover h-9 w-9 min-h-[2.25rem] min-w-[2.25rem] rounded-full ${
-              !awayImage && "bg-primary animate-pulse"
-            }`}
-          />
+
+          <Avatar {...awayAvatarProps} />
         </div>
       </div>
 
@@ -78,7 +71,7 @@ const Head2Head: FC<Props> = ({ match, homeProfile, awayProfile }) => {
       {isPanelOpen && (
         <div className="flex flex-col justify-center items-center pb-2 pt-6">
           {headToHeadMatches &&
-            (headToHeadMatches.length ? (
+            (isFacedEachOther ? (
               headToHeadMatches.map(
                 ({ tournament, home, away, year, surface, result }, index) => (
                   <div
@@ -100,8 +93,8 @@ const Head2Head: FC<Props> = ({ match, homeProfile, awayProfile }) => {
 
                       {/* Players */}
                       <div className="flex flex-col justify-start w-1/3">
-                        <p className="text-white">{home}</p>
-                        <p>{away}</p>
+                        <p className="text-white truncate">{home}</p>
+                        <p className="truncate">{away}</p>
                       </div>
 
                       {/* Results: Games */}
@@ -166,7 +159,9 @@ const Head2Head: FC<Props> = ({ match, homeProfile, awayProfile }) => {
                 )
               )
             ) : (
-              <p>This is their first time facing each other.</p>
+              <p className="text-fourth">
+                This is their first time facing each other.
+              </p>
             ))}
         </div>
       )}

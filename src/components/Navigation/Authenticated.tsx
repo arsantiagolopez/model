@@ -5,10 +5,11 @@ import { BiLoaderAlt } from "react-icons/bi";
 import { FaPlay } from "react-icons/fa";
 import { GiDrippingTube } from "react-icons/gi";
 import { IoLogOut, IoSettingsSharp } from "react-icons/io5";
-import { RiDashboard3Fill } from "react-icons/ri";
+import { RiDashboard3Fill, RiLineChartLine } from "react-icons/ri";
 import axios from "../../axios";
 import { TestsContext } from "../../context/TestsContext";
 import { refreshScreen } from "../../utils/refreshScreen";
+import { Avatar } from "../Avatar";
 import { SignOutAlert } from "../SignOutAlert";
 import { MobileMenu } from "./MobileMenu";
 
@@ -20,10 +21,10 @@ const Authenticated: FC<Props> = ({ session }) => {
   const [isSignOutOpen, setIsSignOutOpen] = useState<boolean>(false);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  const { isModelRunning, setIsModelRunning } = useContext(TestsContext);
+  const { isModelRunning, setIsModelRunning, tests, mutateTests } =
+    useContext(TestsContext);
 
   const { user } = session || {};
-  const { tests, mutateTests } = useContext(TestsContext);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -53,6 +54,7 @@ const Authenticated: FC<Props> = ({ session }) => {
     setIsModelRunning(false);
   };
 
+  const avatarProps = { image: user?.image };
   const mobileMenuProps = {
     isMenuOpen,
     setIsMenuOpen,
@@ -71,12 +73,11 @@ const Authenticated: FC<Props> = ({ session }) => {
     >
       {/* Left */}
       <div className="z-50 flex flex-col md:w-full h-full md:h-[10%] items-center justify-center md:justify-start">
-        <div className="flex flex-row justify-center h-[60%] md:h-10 aspect-square md:mt-auto">
+        <div className="flex flex-row justify-center h-[60%] md:h-10 aspect-square md:mt-auto cursor-pointer">
           <Link href="/">
-            <img
-              src={user?.image}
-              className="rounded-full object-contain cursor-pointer"
-            />
+            <a>
+              <Avatar {...avatarProps} />
+            </a>
           </Link>
         </div>
       </div>
@@ -98,10 +99,14 @@ const Authenticated: FC<Props> = ({ session }) => {
             )}
           </button>
         )}
-
         <Link href="/">
           <button className="text-white hover:text-fourth my-3">
             <RiDashboard3Fill className="text-4xl" />
+          </button>
+        </Link>
+        <Link href="/rankings">
+          <button className="text-white hover:text-fourth my-3">
+            <RiLineChartLine className="text-4xl" />
           </button>
         </Link>
         <Link href="/tests">

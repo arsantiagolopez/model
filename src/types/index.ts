@@ -1,3 +1,4 @@
+export * from "./data";
 export * from "./match";
 export * from "./misc";
 export * from "./player";

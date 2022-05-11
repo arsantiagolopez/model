@@ -1,17 +1,17 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
-import { PreferencesContext } from "../../../context/PreferencesContext";
 import { MatchEntity } from "../../../types";
 import { getFormattedOdds } from "../../../utils/getFormattedOdds";
 import { getLastAndFirstInitial } from "../../../utils/getLastAndFirstInitial";
+
 interface Props {
   match?: MatchEntity;
+  toggleOdds: () => void;
+  oddsFormat: string;
 }
 
-const Odds: FC<Props> = ({ match }) => {
+const Odds: FC<Props> = ({ match, toggleOdds, oddsFormat }) => {
   const [activeType, setActiveType] = useState<string | null>("moneyline");
-
-  const { toggleOdds } = useContext(PreferencesContext);
 
   const { home, away, odds } = match || {};
   const { moneyline, spreadGames, totalGames, spreadSets } = odds || {};
@@ -43,23 +43,27 @@ const Odds: FC<Props> = ({ match }) => {
 
       {activeType === "moneyline" &&
         (moneyline?.home || moneyline?.away ? (
-          <div className="bg-tertiary flex flex-row justify-center items-center py-1.5 px-[5%] hover:bg-secondary">
-            <div className="flex flex-row justify-between w-full border-r-[1px] border-secondary text-fourth pr-3">
-              <p>{home && getLastAndFirstInitial(home)}</p>
+          <div className="bg-tertiary flex flex-row justify-center items-center py-1.5 px-[5%] hover:bg-secondary ">
+            <div className="flex flex-row justify-between w-full border-r-[1px] border-secondary text-fourth pr-3 truncate">
+              <p className="truncate max-w-[75%]">
+                {home && getLastAndFirstInitial(home)}
+              </p>
               <p
                 onClick={toggleOdds}
                 className="text-xs text-white cursor-pointer"
               >
-                {getFormattedOdds(moneyline?.home)}
+                {getFormattedOdds(moneyline?.home, oddsFormat)}
               </p>
             </div>
-            <div className="flex flex-row justify-between w-full text-fourth pl-3">
-              <p>{away && getLastAndFirstInitial(away)}</p>
+            <div className="flex flex-row justify-between w-full text-fourth pl-3 truncate">
+              <p className="truncate max-w-[75%]">
+                {away && getLastAndFirstInitial(away)}
+              </p>
               <p
                 onClick={toggleOdds}
                 className="text-xs text-white cursor-pointer"
               >
-                {getFormattedOdds(moneyline?.away)}
+                {getFormattedOdds(moneyline?.away, oddsFormat)}
               </p>
             </div>
           </div>
@@ -103,7 +107,7 @@ const Odds: FC<Props> = ({ match }) => {
                     onClick={toggleOdds}
                     className="text-xs text-white cursor-pointer"
                   >
-                    {getFormattedOdds(home)}
+                    {getFormattedOdds(home, oddsFormat)}
                   </p>
                 </div>
 
@@ -117,7 +121,7 @@ const Odds: FC<Props> = ({ match }) => {
                     onClick={toggleOdds}
                     className="text-xs text-white cursor-pointer"
                   >
-                    {getFormattedOdds(away)}
+                    {getFormattedOdds(away, oddsFormat)}
                   </p>
                 </div>
               </div>
@@ -155,7 +159,7 @@ const Odds: FC<Props> = ({ match }) => {
                   onClick={toggleOdds}
                   className="text-xs text-white cursor-pointer"
                 >
-                  {getFormattedOdds(over)}
+                  {getFormattedOdds(over, oddsFormat)}
                 </p>
               </div>
               <div className="flex flex-row justify-between w-full text-fourth pl-3">
@@ -164,7 +168,7 @@ const Odds: FC<Props> = ({ match }) => {
                   onClick={toggleOdds}
                   className="text-xs text-white cursor-pointer"
                 >
-                  {getFormattedOdds(under)}
+                  {getFormattedOdds(under, oddsFormat)}
                 </p>
               </div>
             </div>
@@ -208,7 +212,7 @@ const Odds: FC<Props> = ({ match }) => {
                     onClick={toggleOdds}
                     className="text-xs text-white cursor-pointer"
                   >
-                    {getFormattedOdds(home)}
+                    {getFormattedOdds(home, oddsFormat)}
                   </p>
                 </div>
                 <div className="flex flex-row justify-between w-full text-fourth pl-3">
@@ -221,7 +225,7 @@ const Odds: FC<Props> = ({ match }) => {
                     onClick={toggleOdds}
                     className="text-xs text-white cursor-pointer"
                   >
-                    {getFormattedOdds(away)}
+                    {getFormattedOdds(away, oddsFormat)}
                   </p>
                 </div>
               </div>

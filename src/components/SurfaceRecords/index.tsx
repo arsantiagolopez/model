@@ -20,13 +20,17 @@ const SurfaceRecords: FC<Props> = ({ record, currentSurface, allSurfaces }) => {
   };
 
   const allSummaryRatio =
-    all && Number(all.summary.win / all.summary.loss).toFixed(2);
-  const allHardRatio = all && Number(all.hard.win / all.hard.loss).toFixed(2);
-  const allClayRatio = all && Number(all.clay.win / all.clay.loss).toFixed(2);
+    all &&
+    Number(all.summary.win / (all.summary.win + all.summary.loss)).toFixed(2);
+  const allHardRatio =
+    all && Number(all.hard.win / (all.hard.win + all.hard.loss)).toFixed(2);
+  const allClayRatio =
+    all && Number(all.clay.win / (all.clay.win + all.clay.loss)).toFixed(2);
   const allGrassRatio =
-    all && Number(all.grass.win / all.grass.loss).toFixed(2);
+    all && Number(all.grass.win / (all.grass.win + all.grass.loss)).toFixed(2);
   const allIndoorsRatio =
-    all && Number(all.indoors.win / all.indoors.loss).toFixed(2);
+    all &&
+    Number(all.indoors.win / (all.indoors.win + all.indoors.loss)).toFixed(2);
 
   return (
     <div className="flex-col w-full">
@@ -215,7 +219,9 @@ const SurfaceRecords: FC<Props> = ({ record, currentSurface, allSurfaces }) => {
 
           {/* Summary */}
           <div className="flex flex-row justify-center hover:text-white py-1">
-            <p>{allSummaryRatio}</p>
+            <p>
+              {Number.isFinite(Number(allSummaryRatio)) ? allSummaryRatio : "–"}
+            </p>
           </div>
 
           {/* Hard */}
@@ -224,7 +230,7 @@ const SurfaceRecords: FC<Props> = ({ record, currentSurface, allSurfaces }) => {
               currentSurface === "hard" && "text-white bg-secondary rounded-sm"
             }`}
           >
-            <p>{allHardRatio}</p>
+            <p>{Number.isFinite(Number(allHardRatio)) ? allHardRatio : "–"}</p>
           </div>
 
           {/* Clay */}
@@ -233,7 +239,7 @@ const SurfaceRecords: FC<Props> = ({ record, currentSurface, allSurfaces }) => {
               currentSurface === "clay" && "text-white bg-secondary rounded-sm"
             }`}
           >
-            <p>{allClayRatio}</p>
+            <p>{Number.isFinite(Number(allClayRatio)) ? allClayRatio : "–"}</p>
           </div>
 
           {/* Grass */}
@@ -242,7 +248,9 @@ const SurfaceRecords: FC<Props> = ({ record, currentSurface, allSurfaces }) => {
               currentSurface === "grass" && "text-white bg-secondary rounded-sm"
             }`}
           >
-            <p>{allGrassRatio}</p>
+            <p>
+              {Number.isFinite(Number(allGrassRatio)) ? allGrassRatio : "–"}
+            </p>
           </div>
 
           {/* Indoors */}
@@ -253,7 +261,11 @@ const SurfaceRecords: FC<Props> = ({ record, currentSurface, allSurfaces }) => {
                 "text-white bg-secondary rounded-sm"
               }`}
             >
-              <p>{allIndoorsRatio}</p>
+              <p>
+                {Number.isFinite(Number(allIndoorsRatio))
+                  ? allIndoorsRatio
+                  : "–"}
+              </p>
             </div>
           )}
         </div>

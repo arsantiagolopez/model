@@ -1,6 +1,7 @@
 import moment from "moment";
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import useSWR from "swr";
+import { PreferencesContext } from "../../context/PreferencesContext";
 import { TournamentEntity } from "../../types";
 import { getCountryEmoji } from "../../utils/getCountryEmoji";
 import { NextMatches } from "../NextMatches";
@@ -22,6 +23,8 @@ const TournamentTemplate: FC<Props> = ({ title, tournamentId }) => {
   const { data: tournament } = useSWR<TournamentEntity>(
     tournamentId ? `/api/tournaments${tournamentId}` : null
   );
+
+  const { toggleOdds, oddsFormat } = useContext(PreferencesContext);
 
   let {
     name,
@@ -46,9 +49,14 @@ const TournamentTemplate: FC<Props> = ({ title, tournamentId }) => {
 
   const surfaceBadgeProps = { surface };
 
-  const nextMatchesProps = { matches: nextMatches };
-  const tournamentResultsProps = { results };
-  const pastYearResultsProps = { pastYearsResults, activeYear };
+  const nextMatchesProps = { matches: nextMatches, toggleOdds, oddsFormat };
+  const tournamentResultsProps = { results, toggleOdds, oddsFormat };
+  const pastYearResultsProps = {
+    pastYearsResults,
+    activeYear,
+    toggleOdds,
+    oddsFormat,
+  };
   const tournamentDetailsProps = { details };
 
   return (
@@ -85,6 +93,7 @@ const TournamentTemplate: FC<Props> = ({ title, tournamentId }) => {
             >
               {year} –
             </button>
+
             {pastYearsResults?.map(({ year }, index) => (
               <button
                 key={index}
@@ -101,7 +110,7 @@ const TournamentTemplate: FC<Props> = ({ title, tournamentId }) => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-col w-full">
+        <div className="flex flex-col md:flex-col w-full text-white">
           {activeYear === year ? (
             <>
               <NextMatches {...nextMatchesProps} />

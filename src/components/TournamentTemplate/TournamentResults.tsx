@@ -1,16 +1,15 @@
-import React, { FC, MouseEventHandler, useContext } from "react";
-import { PreferencesContext } from "../../context/PreferencesContext";
+import React, { FC, MouseEventHandler } from "react";
 import { MatchEntity } from "../../types";
 import { getDayAndTimeFromDate } from "../../utils/getDayAndTimeFromDate";
 import { getFormattedOdds } from "../../utils/getFormattedOdds";
 
 interface Props {
   results: MatchEntity[] | undefined;
+  toggleOdds: () => void;
+  oddsFormat: string;
 }
 
-const TournamentResults: FC<Props> = ({ results }) => {
-  const { toggleOdds } = useContext(PreferencesContext);
-
+const TournamentResults: FC<Props> = ({ results, toggleOdds, oddsFormat }) => {
   // Toggle odds
   const handleToggleOdds: MouseEventHandler<HTMLDivElement> = (event) => {
     event.stopPropagation();
@@ -22,18 +21,21 @@ const TournamentResults: FC<Props> = ({ results }) => {
       <h1 className="font-Signika tracking-tight text-xl mb-2">Results</h1>
       <div className="rounded-md bg-tertiary p-2 md:p-4 text-fourth text-xs w-full">
         <div className="flex flex-row w-full bg-primary text-white text-center font-semibold py-1 my-1 rounded-sm hover:bg-black ">
-          <p className="w-[10%] min-w-[3rem]">Start</p>
-          <p className="w-[10%] min-w-[3rem]">Round</p>
-          <p className="w-[40%] md:w-[30%] min-w-[8rem] md:min-w-[9rem] text-left">
+          <p className="w-[10%] min-w-[2.75rem] md:min-w-[3rem]">Start</p>
+          <p className="w-[10%] min-w-[2.75rem] md:min-w-[3rem]">
+            <span className="hidden md:block">Round</span>
+            <span className="block md:hidden">Rd.</span>
+          </p>
+          <p className="w-[40%] md:w-[30%] min-w-[6.5rem] md:min-w-[8rem] text-left md:pl-2">
             Headline
           </p>
-          <div className="flex flex-row w-[35%] md:w-[30%] min-w-[5rem] md:min-w-[6rem] ">
-            <p className="pr-2 md:pr-4">S</p>
-            <p className="pr-2 md:pr-4">1</p>
-            <p className="pr-2 md:pr-4">2</p>
-            <p className="pr-2 md:pr-4">3</p>
-            <p className="pr-2 md:pr-4">4</p>
-            <p className="pr-2 md:pr-4">5</p>
+          <div className="flex flex-row w-[35%] md:w-[25%] min-w-[3.75rem] md:min-w-[6rem] ">
+            <p className="pr-1 md:pr-2.5">S</p>
+            <p className="pr-1 md:pr-2.5">1</p>
+            <p className="pr-1 md:pr-2.5">2</p>
+            <p className="pr-1 md:pr-2.5">3</p>
+            <p className="pr-1 md:pr-2.5">4</p>
+            <p className="pr-1 md:pr-2.5">5</p>
           </div>
 
           <p className="md:hidden w-[8%] min-w-[2rem]">H</p>
@@ -76,25 +78,27 @@ const TournamentResults: FC<Props> = ({ results }) => {
                 // onClick={() => goToLink(`/match${matchLink}`)}
                 className="flex flex-row w-full text-center py-1 hover:bg-secondary cursor-pointer"
               >
-                <div className="flex flex-col justify-center items-center w-[10%] min-w-[3rem] px-2">
+                <div className="flex flex-col justify-center items-center w-[10%] min-w-[2.75rem] md:min-w-[3rem] md:px-1">
                   <p className="text-[0.65rem] tracking-tighter">{day}</p>
                   {time}
                 </div>
-                <p className="w-[10%] min-w-[3rem] flex justify-center items-center px-2">
+
+                <p className="w-[10%] min-w-[2.75rem] md:min-w-[3rem] flex justify-center items-center px-2">
                   {round}
                 </p>
-                <div className="flex flex-col items-start w-[40%] md:w-[30%] min-w-[8rem] md:min-w-[9rem]">
-                  <p className="text-left text-white">{home}</p>
-                  <p className="text-left text-fourth">{away}</p>
+
+                <div className="flex flex-col items-start w-[40%] md:w-[30%] min-w-[6.5rem] md:min-w-[8rem] md:pl-2">
+                  <p className="text-left text-white truncate">{home}</p>
+                  <p className="text-left text-fourth truncate">{away}</p>
                 </div>
 
-                <div className="flex flex-row justify-start w-[35%] md:w-[30%] min-w-[5rem] md:min-w-[6rem] text-left">
+                <div className="flex flex-row justify-start w-[35%] md:w-[25%] min-w-[3.75rem] md:min-w-[6rem] text-left">
                   {/* Sets */}
                   <div>
-                    <p className="pr-2 md:pr-4 font-semibold text-white">
+                    <p className="pr-1 md:pr-2.5 font-semibold text-white">
                       {homeSets}
                     </p>
-                    <p className="pr-2 md:pr-4 font-semibold text-white">
+                    <p className="pr-1 md:pr-2.5 font-semibold text-white">
                       {awaySets}
                     </p>
                   </div>
@@ -107,7 +111,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                         <sup>{String(homeGamesFirstSet).slice(1)}</sup>
                       </p>
                     ) : (
-                      <p className="pr-2 md:pr-4">{homeGamesFirstSet}</p>
+                      <p className="pr-1 md:pr-2.5">{homeGamesFirstSet}</p>
                     )}
                     {awayGamesFirstSet && awayGamesFirstSet > 9 ? (
                       <p className="pr-0.5">
@@ -115,7 +119,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                         <sup>{String(awayGamesFirstSet).slice(1)}</sup>
                       </p>
                     ) : (
-                      <p className="pr-2 md:pr-4">{awayGamesFirstSet}</p>
+                      <p className="pr-1 md:pr-2.5">{awayGamesFirstSet}</p>
                     )}
                   </div>
 
@@ -127,7 +131,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                         <sup>{String(homeGamesSecondSet).slice(1)}</sup>
                       </p>
                     ) : (
-                      <p className="pr-2 md:pr-4">{homeGamesSecondSet}</p>
+                      <p className="pr-1 md:pr-2.5">{homeGamesSecondSet}</p>
                     )}
                     {awayGamesSecondSet && awayGamesSecondSet > 9 ? (
                       <p className="pr-0.5">
@@ -135,7 +139,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                         <sup>{String(awayGamesSecondSet).slice(1)}</sup>
                       </p>
                     ) : (
-                      <p className="pr-2 md:pr-4">{awayGamesSecondSet}</p>
+                      <p className="pr-1 md:pr-2.5">{awayGamesSecondSet}</p>
                     )}
                   </div>
 
@@ -148,7 +152,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                           <sup>{String(homeGamesThirdSet).slice(1)}</sup>
                         </p>
                       ) : (
-                        <p className="pr-2 md:pr-4">{homeGamesThirdSet}</p>
+                        <p className="pr-1 md:pr-2.5">{homeGamesThirdSet}</p>
                       )}
                       {Number(awayGamesThirdSet) > 9 ? (
                         <p className="pr-0.5">
@@ -156,7 +160,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                           <sup>{String(awayGamesThirdSet).slice(1)}</sup>
                         </p>
                       ) : (
-                        <p className="pr-2 md:pr-4">{awayGamesThirdSet}</p>
+                        <p className="pr-1 md:pr-2.5">{awayGamesThirdSet}</p>
                       )}
                     </div>
                   ) : null}
@@ -170,7 +174,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                           <sup>{String(homeGamesFourthSet).slice(1)}</sup>
                         </p>
                       ) : (
-                        <p className="pr-2 md:pr-4">{homeGamesFourthSet}</p>
+                        <p className="pr-1 md:pr-2.5">{homeGamesFourthSet}</p>
                       )}
                       {Number(awayGamesFourthSet) > 9 ? (
                         <p className="pr-0.5">
@@ -178,7 +182,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                           <sup>{String(awayGamesFourthSet).slice(1)}</sup>
                         </p>
                       ) : (
-                        <p className="pr-2 md:pr-4">{awayGamesFourthSet}</p>
+                        <p className="pr-1 md:pr-2.5">{awayGamesFourthSet}</p>
                       )}
                     </div>
                   ) : null}
@@ -192,7 +196,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                           <sup>{String(homeGamesFifthSet).slice(1)}</sup>
                         </p>
                       ) : (
-                        <p className="pr-2 md:pr-4">{homeGamesFifthSet}</p>
+                        <p className="pr-1 md:pr-2.5">{homeGamesFifthSet}</p>
                       )}
                       {Number(awayGamesFifthSet) > 9 ? (
                         <p className="pr-0.5">
@@ -200,7 +204,7 @@ const TournamentResults: FC<Props> = ({ results }) => {
                           <sup>{String(awayGamesFifthSet).slice(1)}</sup>
                         </p>
                       ) : (
-                        <p className="pr-2 md:pr-4">{awayGamesFifthSet}</p>
+                        <p className="pr-1 md:pr-2.5">{awayGamesFifthSet}</p>
                       )}
                     </div>
                   ) : null}
@@ -210,13 +214,13 @@ const TournamentResults: FC<Props> = ({ results }) => {
                   onClick={handleToggleOdds}
                   className="w-[8%] md:w-[10%] min-w-[2rem] self-center"
                 >
-                  {getFormattedOdds(homeOdds)}
+                  {getFormattedOdds(homeOdds, oddsFormat)}
                 </p>
                 <p
                   onClick={handleToggleOdds}
                   className="w-[8%] md:w-[10%] min-w-[2rem] self-center"
                 >
-                  {getFormattedOdds(awayOdds)}
+                  {getFormattedOdds(awayOdds, oddsFormat)}
                 </p>
               </div>
             );

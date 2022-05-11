@@ -69,7 +69,7 @@ const TestSummary: FC<Props> = () => {
               <p className="text-white font-Signika tracking-tight text-xl md:text-2xl">
                 {name}
               </p>
-              <p className="text-black uppercase tracking-widest text-[0.6rem] md:text-xs font-thin">
+              <p className="text-white uppercase tracking-widest text-[0.6rem] md:text-xs font-thin">
                 {passed === null ? "Hasn't run" : lastPassed}
               </p>
             </div>

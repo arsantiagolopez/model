@@ -57,7 +57,7 @@ const parsePastYears = async (
       let currentResult: MatchResult = {} as MatchResult;
 
       for (const row of rows) {
-        // Row is home: Get match details & home gets & games
+        // Row is home: Get match details & home sets & games
         if (!row.id.includes("b")) {
           // Match date
           const date =

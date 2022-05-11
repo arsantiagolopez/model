@@ -1,56 +1,20 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import React from "react";
+import useSWR from "swr";
+import axios from "../axios";
 import { Layout } from "../components/Layout";
+import { PlayerProfile } from "../types";
 
 const TestPage: NextPage = () => {
-  const players = [
-    {
-      playerId: 1,
-      lastMatches: [
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "no" } },
-      ],
-    },
-    {
-      playerId: 2,
-      lastMatches: [
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "no" } },
-      ],
-    },
-    {
-      playerId: 3,
-      lastMatches: [
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "no" } },
-        { home: "test", result: { winner: "no" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "test" } },
-        { home: "test", result: { winner: "no" } },
-      ],
-    },
-  ];
+  const { data: player } = useSWR<PlayerProfile>(
+    "/api/players/profile/borodulina/"
+  );
 
-  // Upsert players entities
-  for (const player of players) {
-    const { playerId, lastMatches } = player;
+  const fetchPlayersData = async () => {
+    const response = await axios.post("/api/scrape/rankings");
+  };
 
-    // Track form over last 10 matches
-    const wins = lastMatches.reduce(
-      (acc, { home, result }) => (home === result?.winner ? ++acc : acc),
-      0
-    );
-    const form = wins / lastMatches.length;
-
-    console.log(`PlayerId: ${playerId}, avg: ${form}`);
-  }
   return (
     <>
       <Head>
@@ -58,7 +22,9 @@ const TestPage: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <div></div>
+        <div className="ml-24 text-white">
+          <button onClick={fetchPlayersData}>Click me</button>
+        </div>
       </Layout>
     </>
   );

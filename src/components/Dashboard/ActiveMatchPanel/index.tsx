@@ -2,10 +2,12 @@ import moment from "moment";
 import Link from "next/link";
 import React, { Dispatch, FC, SetStateAction } from "react";
 import { GoChevronLeft } from "react-icons/go";
+import { HiOutlineExternalLink } from "react-icons/hi";
 import useSWR from "swr";
 import countryCodes from "../../../data/countries.json";
 import { MatchEntity, PlayerProfile } from "../../../types";
 import { getLastAndFirstInitial } from "../../../utils/getLastAndFirstInitial";
+import { Avatar } from "../../Avatar";
 import { SurfaceBadge } from "../../SurfaceBadge";
 import { CountdownToDate } from "./CountdownToDate";
 import { Head2Head } from "./Head2Head";
@@ -15,10 +17,22 @@ import { Records } from "./Records";
 interface Props {
   id: string | null;
   setActiveMatchId: Dispatch<SetStateAction<string | null>>;
+  setActivePlayerId: Dispatch<SetStateAction<string | undefined>>;
+  toggleOdds: () => void;
+  oddsFormat: string;
 }
 
-const ActiveMatchPanel: FC<Props> = ({ id, setActiveMatchId }) => {
+const ActiveMatchPanel: FC<Props> = ({
+  id,
+  setActiveMatchId,
+  setActivePlayerId,
+  toggleOdds,
+  oddsFormat,
+}) => {
   const { data: match } = useSWR<MatchEntity>(id && `/api/matches/${id}`);
+
+  const TENNIS_EXPLORER_MATCH_INFO_LINK =
+    match && process.env.NEXT_PUBLIC_SCRAPING_SCHEDULE_URL + match.matchLink;
 
   let {
     tournament,
@@ -31,6 +45,12 @@ const ActiveMatchPanel: FC<Props> = ({ id, setActiveMatchId }) => {
     surface,
     date,
   } = match || {};
+
+  // Reset both the matchId and the playerId
+  const resetActiveIds = () => {
+    setActiveMatchId(null);
+    setActivePlayerId(undefined);
+  };
 
   const { data: homeProfile } = useSWR<PlayerProfile>(
     homeLink &&
@@ -84,18 +104,19 @@ const ActiveMatchPanel: FC<Props> = ({ id, setActiveMatchId }) => {
   const isStartTomorrow = moment(date).isAfter(moment(new Date()).endOf("day"));
   const formattedDate = moment(date).format("h:mm A");
 
+  const homeAvatarProps = { image: homeImage, width: "4rem" };
+  const awayAvatarProps = { image: awayImage, width: "4rem" };
+  const homeFlagAvatarProps = { image: homeFlag };
+  const awayFlagAvatarProps = { image: awayFlag };
   const countdownToDateProps = { date };
   const recordsProps = { match, homeLink, awayLink };
   const head2HeadProps = { match, homeProfile, awayProfile };
-  const oddsProps = { match };
+  const oddsProps = { match, toggleOdds, oddsFormat };
 
   return (
     <div className="sticky top-4 w-full md:w-[30vw] mb-10 md:mb-4 rounded-md bg-tertiary p-4 text-xs overflow-y-auto max-h-[95vh]">
       {/* Close panel button */}
-      <div
-        onClick={() => setActiveMatchId(null)}
-        className="absolute top-4 right-4"
-      >
+      <div onClick={resetActiveIds} className="absolute top-4 right-4">
         <GoChevronLeft className="text-xl cursor-pointer hover:animate-pulse text-white" />
       </div>
 
@@ -114,6 +135,14 @@ const ActiveMatchPanel: FC<Props> = ({ id, setActiveMatchId }) => {
         <span className="h-4 w-auto mx-2">
           <SurfaceBadge surface={surface} withText />
         </span>
+        <a
+          href={TENNIS_EXPLORER_MATCH_INFO_LINK}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-auto mr-1"
+        >
+          <HiOutlineExternalLink className="text-white text-lg hover:scale-110 hover:animate-pulse" />
+        </a>
       </h1>
 
       {/* Images and start time */}
@@ -125,17 +154,14 @@ const ActiveMatchPanel: FC<Props> = ({ id, setActiveMatchId }) => {
               {tour} {homeRank}
             </p>
           ) : null}
+
           {homeLink && (
             <Link href={homeLink}>
-              <div className="relative">
-                <img
-                  src={homeImage}
-                  className={`object-cover h-16 w-16 min-h-[4rem] min-w-[4rem] rounded-full cursor-pointer ${
-                    !homeImage && "bg-primary animate-pulse"
-                  }`}
-                />
+              <div className="relative cursor-pointer">
+                <Avatar {...homeAvatarProps} />
+
                 <div className="absolute -bottom-1.5 -left-1.5 md:bottom-0 md:right-0 w-5 h-5 mx-2 md:mx-3 rounded-full aspect-square">
-                  <img src={homeFlag} />
+                  <Avatar {...homeFlagAvatarProps} />
                 </div>
               </div>
             </Link>
@@ -158,15 +184,11 @@ const ActiveMatchPanel: FC<Props> = ({ id, setActiveMatchId }) => {
           ) : null}
           {awayLink && (
             <Link href={awayLink}>
-              <div className="relative">
-                <img
-                  src={awayImage}
-                  className={`object-cover h-16 w-16 min-h-[4rem] min-w-[4rem] rounded-full cursor-pointer ${
-                    !awayImage && "bg-primary animate-pulse"
-                  }`}
-                />
+              <div className="relative cursor-pointer">
+                <Avatar {...awayAvatarProps} />
+
                 <div className="absolute -bottom-1.5 -right-1.5 md:bottom-0 md:-right-2 w-5 h-5 mx-2 md:mx-3 rounded-full aspect-square">
-                  <img src={awayFlag} />
+                  <Avatar {...awayFlagAvatarProps} />
                 </div>
               </div>
             </Link>

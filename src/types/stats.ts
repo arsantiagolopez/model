@@ -1,4 +1,4 @@
-import { PlayerEntity } from ".";
+import { MatchEntity, PlayerEntity, PlayerProfile, WinLossRecord } from ".";
 
 export interface PlayerStatsEntity {
   playerId?: string;
@@ -44,4 +44,20 @@ export interface PlayerAndCountry {
   player: PlayerEntity;
   country: string;
   countryCode: string;
+}
+
+export interface MatchPlayerProfilesAndDates {
+  match: MatchEntity;
+  homeProfile: PlayerProfile;
+  awayProfile: PlayerProfile;
+  homeDaysSinceLastMatch: number;
+  awayDaysSinceLastMatch: number;
+}
+
+export interface MatchPlayerProfilesAndSurfaceRecords {
+  match: MatchEntity;
+  homeProfile: PlayerProfile;
+  awayProfile: PlayerProfile;
+  homeCurrentSurfaceRecord: WinLossRecord;
+  awayCurrentSurfaceRecord: WinLossRecord;
 }

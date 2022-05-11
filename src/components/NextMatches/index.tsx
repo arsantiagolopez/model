@@ -1,16 +1,15 @@
-import React, { FC, MouseEventHandler, useContext } from "react";
-import { PreferencesContext } from "../../context/PreferencesContext";
+import React, { FC, MouseEventHandler } from "react";
 import { MatchEntity } from "../../types";
 import { getDayAndTimeFromDate } from "../../utils/getDayAndTimeFromDate";
 import { getFormattedOdds } from "../../utils/getFormattedOdds";
 
 interface Props {
   matches?: MatchEntity[];
+  toggleOdds: () => void;
+  oddsFormat: string;
 }
 
-const NextMatches: FC<Props> = ({ matches }) => {
-  const { toggleOdds } = useContext(PreferencesContext);
-
+const NextMatches: FC<Props> = ({ matches, toggleOdds, oddsFormat }) => {
   // Toggle odds
   const handleToggleOdds: MouseEventHandler<HTMLDivElement> = (event) => {
     event.stopPropagation();
@@ -18,7 +17,7 @@ const NextMatches: FC<Props> = ({ matches }) => {
   };
 
   return (
-    <div className="flex flex-col my-4 w-full">
+    <div className="flex flex-col my-4 w-full text-white">
       <h1 className="font-Signika tracking-tight text-xl mb-2">Next Matches</h1>
       <div className="rounded-md bg-tertiary p-2 md:p-4 text-fourth text-xs w-full">
         <div className="flex flex-row w-full bg-primary text-center font-semibold py-1 my-1 rounded-sm hover:bg-black text-white">
@@ -51,7 +50,7 @@ const NextMatches: FC<Props> = ({ matches }) => {
                 key={matchId}
                 className="flex flex-row w-full text-center py-1 hover:bg-secondary cursor-pointer"
               >
-                <div className="flex flex-col justify-center items-center w-[10%] min-w-[3rem] px-2">
+                <div className="flex flex-col justify-center items-center w-[10%] min-w-[3rem] md:px-1">
                   <p className="text-[0.65rem] tracking-tighter">{day}</p>
                   {time}
                 </div>
@@ -70,13 +69,13 @@ const NextMatches: FC<Props> = ({ matches }) => {
                   onClick={handleToggleOdds}
                   className="w-[10%] min-w-[3rem] self-center"
                 >
-                  {getFormattedOdds(homeOdds)}
+                  {getFormattedOdds(homeOdds, oddsFormat)}
                 </p>
                 <p
                   onClick={handleToggleOdds}
                   className="w-[10%] min-w-[3rem] self-center"
                 >
-                  {getFormattedOdds(awayOdds)}
+                  {getFormattedOdds(awayOdds, oddsFormat)}
                 </p>
               </div>
             );

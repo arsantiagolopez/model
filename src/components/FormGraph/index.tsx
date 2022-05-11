@@ -2,6 +2,7 @@ import moment from "moment";
 import React, { FC, useEffect, useState } from "react";
 import { Bar, BarChart, Cell, ResponsiveContainer } from "recharts";
 import { MatchEntity } from "../../types";
+import { SurfaceBadge } from "../SurfaceBadge";
 
 interface Props {
   lastMatches?: MatchEntity[];
@@ -71,10 +72,13 @@ const FormGraph: FC<Props> = ({
     <div className="relative flex flex-col justify-center items-center w-full">
       <div className="absolute -top-1 flex flex-row justify-start w-full text-xs text-white h-10">
         {isDetailed && activeBar && matches ? (
-          <div className="flex flex-col text-white">
-            <p>
-              {matches[activeBar]?.home} vs. {matches[activeBar]?.away}
-            </p>
+          <div className="z-50 flex flex-col text-white">
+            <div className="flex flex-row items-center">
+              {matches[activeBar]?.home} vs. {matches[activeBar]?.away}{" "}
+              <span className="h-3 w-3 mx-2">
+                <SurfaceBadge surface={matches[activeBar]?.surface} />
+              </span>
+            </div>
             <p>
               {matches[activeBar]?.result?.homeSets}–
               {matches[activeBar]?.result?.awaySets}
@@ -86,7 +90,7 @@ const FormGraph: FC<Props> = ({
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={graphData}
-            margin={{ top: 0, bottom: 0, left: 0, right: 0 }}
+            margin={{ top: isDetailed ? 30 : 0, bottom: 0, left: 0, right: 0 }}
             barCategoryGap={graphGap ?? 1.5}
             onMouseMove={(state) => {
               const { activeTooltipIndex } = state || {};

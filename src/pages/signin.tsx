@@ -4,9 +4,11 @@ import {
   ClientSafeProvider,
   getProviders,
   LiteralUnion,
+  useSession,
 } from "next-auth/react";
 import Head from "next/head";
-import React from "react";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 import { Layout } from "../components/Layout";
 import { SignIn } from "../components/SignIn";
 
@@ -18,6 +20,17 @@ interface Props {
 }
 
 const SignInPage: NextPage<Props> = ({ providers }) => {
+  const { data } = useSession();
+
+  const router = useRouter();
+
+  // Redirect to dashboard if authenticated
+  useEffect(() => {
+    if (data?.user) {
+      router.push("/");
+    }
+  }, [data]);
+
   const signInProps = { providers };
 
   return (

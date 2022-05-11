@@ -33,7 +33,7 @@ const scrapeTournaments = async (
 
     // // @test TEST
     // links = [
-    //   "https://www.tennisexplorer.com/billie-jean-king-cup/2022/wta-women/",
+    //   "https://www.tennisexplorer.com/madrid-masters/2019/atp-men/",
     //   "https://www.tennisexplorer.com/monte-carlo/2022/atp-men/",
     // ];
 
@@ -88,7 +88,7 @@ const scrapeTournaments = async (
       // Parse past matches date
       pastYearsResults = pastYearsResults?.map((year) => ({
         ...year,
-        matches: matches.map((match) => ({
+        matches: year.matches.map((match) => ({
           ...match,
           date: parseStringToDate({ date: match?.date, isPastMatch: true }),
         })) as MatchEntity[],

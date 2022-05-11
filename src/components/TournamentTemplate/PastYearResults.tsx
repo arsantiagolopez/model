@@ -5,14 +5,21 @@ import { TournamentResults } from "./TournamentResults";
 interface Props {
   pastYearsResults?: PastYearResult[];
   activeYear: number;
+  toggleOdds: () => void;
+  oddsFormat: string;
 }
 
-const PastYearResults: FC<Props> = ({ pastYearsResults, activeYear }) => {
+const PastYearResults: FC<Props> = ({
+  pastYearsResults,
+  activeYear,
+  toggleOdds,
+  oddsFormat,
+}) => {
   const results = pastYearsResults?.find(
     ({ year }) => Number(year) === activeYear
   )?.matches;
 
-  const tournamentResultsProps = { results };
+  const tournamentResultsProps = { results, toggleOdds, oddsFormat };
 
   return <TournamentResults {...tournamentResultsProps} />;
 };

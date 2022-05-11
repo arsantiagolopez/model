@@ -15,8 +15,6 @@ const getTournamentById = async (
 ): Promise<TournamentEntity | void> => {
   let { tournamentId } = query;
 
-  console.log(tournamentId);
-
   tournamentId = Array.isArray(tournamentId)
     ? `/${tournamentId.join("/")}/`
     : tournamentId;

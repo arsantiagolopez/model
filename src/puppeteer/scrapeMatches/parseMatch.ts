@@ -106,9 +106,15 @@ const parseMatch = async (
        * Section - Get head to head
        **********************************/
 
-      const headToHeadWrapper = document.querySelectorAll("#center .box")[4];
+      const headToHeadWrapper: any = document.evaluate(
+        "//h2[contains(., 'Head')]/following-sibling::div",
+        document,
+        null,
+        XPathResult.FIRST_ORDERED_NODE_TYPE,
+        null
+      ).singleNodeValue;
 
-      const rows = headToHeadWrapper.querySelectorAll("tbody tr");
+      const rows = headToHeadWrapper?.querySelectorAll("tbody tr");
 
       let headToHeadMatches: MatchEntity[] = [];
 
@@ -117,146 +123,150 @@ const parseMatch = async (
       let currentResult: MatchResult = {} as MatchResult;
 
       // Rows are players in matches
-      for (const [index, player] of rows.entries()) {
-        // Even numbers are home players
-        const isHomePlayer = !(index % 2);
+      if (rows) {
+        for (const [index, player] of rows.entries()) {
+          // Even numbers are home players
+          const isHomePlayer = !(index % 2);
 
-        // Get home player
-        if (isHomePlayer) {
-          currentYear = Number(player.querySelector("td")?.textContent ?? 0);
-          currentTournament =
-            player.querySelectorAll("td")[1]?.textContent ?? undefined;
+          // Get home player
+          if (isHomePlayer) {
+            currentYear = Number(player.querySelector("td")?.textContent ?? 0);
+            currentTournament =
+              player.querySelectorAll("td")[1]?.textContent ?? undefined;
 
-          // Match home name
-          const home =
-            player.querySelector("td[class*='name']")?.textContent ?? undefined;
+            // Match home name
+            const home =
+              player.querySelector("td[class*='name']")?.textContent ??
+              undefined;
 
-          // Match home sets
-          const homeSets = Number(
-            player.querySelector(".result")?.textContent ?? 0
-          );
+            // Match home sets
+            const homeSets = Number(
+              player.querySelector(".result")?.textContent ?? 0
+            );
 
-          // Match surface
-          const surface = player
-            .querySelector("td[class*='sColor'] > span")
-            ?.getAttribute("title")
-            ?.toLowerCase();
+            // Match surface
+            const surface = player
+              .querySelector("td[class*='sColor'] > span")
+              ?.getAttribute("title")
+              ?.toLowerCase();
 
-          // Match round
-          const round =
-            player.querySelector(".round")?.textContent ?? undefined;
+            // Match round
+            const round =
+              player.querySelector(".round")?.textContent ?? undefined;
 
-          // Match home games per set
-          // Strip the game number if set went to tiebreak
+            // Match home games per set
+            // Strip the game number if set went to tiebreak
 
-          const homeGamesWrapper = player.querySelectorAll(".score");
-          const homeGamesFirstSet =
-            Number(homeGamesWrapper[0]?.textContent ?? 0) > 59
-              ? 6
-              : Number(homeGamesWrapper[0]?.textContent ?? 0);
+            const homeGamesWrapper = player.querySelectorAll(".score");
+            const homeGamesFirstSet =
+              Number(homeGamesWrapper[0]?.textContent ?? 0) > 59
+                ? 6
+                : Number(homeGamesWrapper[0]?.textContent ?? 0);
 
-          const homeGamesSecondSet =
-            Number(homeGamesWrapper[1]?.textContent ?? 0) > 59
-              ? 6
-              : Number(homeGamesWrapper[1]?.textContent ?? 0);
-          const homeGamesThirdSet =
-            Number(homeGamesWrapper[2]?.textContent ?? 0) > 59
-              ? 6
-              : Number(homeGamesWrapper[2]?.textContent ?? 0);
-          const homeGamesFourthSet =
-            Number(homeGamesWrapper[3]?.textContent ?? 0) > 59
-              ? 6
-              : Number(homeGamesWrapper[3]?.textContent ?? 0);
-          const homeGamesFifthSet =
-            Number(homeGamesWrapper[4]?.textContent ?? 0) > 59
-              ? 6
-              : Number(homeGamesWrapper[4]?.textContent ?? 0);
+            const homeGamesSecondSet =
+              Number(homeGamesWrapper[1]?.textContent ?? 0) > 59
+                ? 6
+                : Number(homeGamesWrapper[1]?.textContent ?? 0);
+            const homeGamesThirdSet =
+              Number(homeGamesWrapper[2]?.textContent ?? 0) > 59
+                ? 6
+                : Number(homeGamesWrapper[2]?.textContent ?? 0);
+            const homeGamesFourthSet =
+              Number(homeGamesWrapper[3]?.textContent ?? 0) > 59
+                ? 6
+                : Number(homeGamesWrapper[3]?.textContent ?? 0);
+            const homeGamesFifthSet =
+              Number(homeGamesWrapper[4]?.textContent ?? 0) > 59
+                ? 6
+                : Number(homeGamesWrapper[4]?.textContent ?? 0);
 
-          // Update current result
-          currentResult = {
-            ...currentResult,
-            homeSets,
-            homeGamesFirstSet,
-            homeGamesSecondSet,
-            homeGamesThirdSet,
-            homeGamesFourthSet,
-            homeGamesFifthSet,
-          };
+            // Update current result
+            currentResult = {
+              ...currentResult,
+              homeSets,
+              homeGamesFirstSet,
+              homeGamesSecondSet,
+              homeGamesThirdSet,
+              homeGamesFourthSet,
+              homeGamesFifthSet,
+            };
 
-          // Update match
-          match = {
-            ...match,
-            home,
-            surface,
-            round,
-            result: currentResult as MatchResult,
-          } as MatchEntity;
-        }
-        // Get away player
-        else {
-          // Match away name
-          const away =
-            player.querySelector("td[class*='name']")?.textContent ?? undefined;
+            // Update match
+            match = {
+              ...match,
+              home,
+              surface,
+              round,
+              result: currentResult as MatchResult,
+            } as MatchEntity;
+          }
+          // Get away player
+          else {
+            // Match away name
+            const away =
+              player.querySelector("td[class*='name']")?.textContent ??
+              undefined;
 
-          // Match away sets
-          const awaySets = Number(
-            player.querySelector(".result")?.textContent ?? 0
-          );
+            // Match away sets
+            const awaySets = Number(
+              player.querySelector(".result")?.textContent ?? 0
+            );
 
-          // Match away games per set
-          // Strip the game number if set went to tiebreak
+            // Match away games per set
+            // Strip the game number if set went to tiebreak
 
-          const awayGamesWrapper = player.querySelectorAll(".score");
-          const awayGamesFirstSet =
-            Number(awayGamesWrapper[0]?.textContent ?? 0) > 59
-              ? 6
-              : Number(awayGamesWrapper[0]?.textContent ?? 0);
+            const awayGamesWrapper = player.querySelectorAll(".score");
+            const awayGamesFirstSet =
+              Number(awayGamesWrapper[0]?.textContent ?? 0) > 59
+                ? 6
+                : Number(awayGamesWrapper[0]?.textContent ?? 0);
 
-          const awayGamesSecondSet =
-            Number(awayGamesWrapper[1]?.textContent ?? 0) > 59
-              ? 6
-              : Number(awayGamesWrapper[1]?.textContent ?? 0);
-          const awayGamesThirdSet =
-            Number(awayGamesWrapper[2]?.textContent ?? 0) > 59
-              ? 6
-              : Number(awayGamesWrapper[2]?.textContent ?? 0);
-          const awayGamesFourthSet =
-            Number(awayGamesWrapper[3]?.textContent ?? 0) > 59
-              ? 6
-              : Number(awayGamesWrapper[3]?.textContent ?? 0);
-          const awayGamesFifthSet =
-            Number(awayGamesWrapper[4]?.textContent ?? 0) > 59
-              ? 6
-              : Number(awayGamesWrapper[4]?.textContent ?? 0);
+            const awayGamesSecondSet =
+              Number(awayGamesWrapper[1]?.textContent ?? 0) > 59
+                ? 6
+                : Number(awayGamesWrapper[1]?.textContent ?? 0);
+            const awayGamesThirdSet =
+              Number(awayGamesWrapper[2]?.textContent ?? 0) > 59
+                ? 6
+                : Number(awayGamesWrapper[2]?.textContent ?? 0);
+            const awayGamesFourthSet =
+              Number(awayGamesWrapper[3]?.textContent ?? 0) > 59
+                ? 6
+                : Number(awayGamesWrapper[3]?.textContent ?? 0);
+            const awayGamesFifthSet =
+              Number(awayGamesWrapper[4]?.textContent ?? 0) > 59
+                ? 6
+                : Number(awayGamesWrapper[4]?.textContent ?? 0);
 
-          // Update current result
-          currentResult = {
-            ...currentResult,
-            awaySets,
-            awayGamesFirstSet,
-            awayGamesSecondSet,
-            awayGamesThirdSet,
-            awayGamesFourthSet,
-            awayGamesFifthSet,
-          };
+            // Update current result
+            currentResult = {
+              ...currentResult,
+              awaySets,
+              awayGamesFirstSet,
+              awayGamesSecondSet,
+              awayGamesThirdSet,
+              awayGamesFourthSet,
+              awayGamesFifthSet,
+            };
 
-          // Update match
-          match = {
-            ...match,
-            away,
-            year: currentYear,
-            tournament: currentTournament,
-            result: currentResult as MatchResult,
-          } as MatchEntity;
+            // Update match
+            match = {
+              ...match,
+              away,
+              year: currentYear,
+              tournament: currentTournament,
+              result: currentResult as MatchResult,
+            } as MatchEntity;
 
-          // Push match to array
-          headToHeadMatches.push(match as MatchEntity);
+            // Push match to array
+            headToHeadMatches.push(match as MatchEntity);
 
-          // Reset fields
-          match = {} as MatchEntity;
-          currentResult = {} as MatchResult;
-          currentYear = undefined;
-          currentTournament = undefined;
+            // Reset fields
+            match = {} as MatchEntity;
+            currentResult = {} as MatchResult;
+            currentYear = undefined;
+            currentTournament = undefined;
+          }
         }
       }
 

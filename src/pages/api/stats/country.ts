@@ -8,10 +8,56 @@ import {
   TournamentEntity,
 } from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
+import { format } from "../../../utils/formatToMongoEntity";
+import { clientPromise } from "../../../utils/mongodb";
 
 interface TournamentHash {
   [tournamendId: string]: Record<string, string>;
 }
+
+// Get cached results from database for quicker lookup times
+const getCachedResults = async (): Promise<PlayerAndCountry[]> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { PlayersAndCountries } = {
+      PlayersAndCountries: db.collection<PlayerAndCountry>(
+        "playersAndCountries"
+      ),
+    };
+
+    const results = (await PlayersAndCountries.find().toArray()).map((entity) =>
+      format.from(entity)
+    );
+
+    return results;
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+    return [];
+  }
+};
+
+// Store results in database for quick lookup after first load
+const cacheResults = async (
+  playersAndCountries: PlayerAndCountry[]
+): Promise<void> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { PlayersAndCountries } = {
+      PlayersAndCountries: db.collection<PlayerAndCountry>(
+        "playersAndCountries"
+      ),
+    };
+
+    // Convert to MongoDB object
+    playersAndCountries = playersAndCountries.map((entity) =>
+      format.to(entity)
+    );
+
+    await PlayersAndCountries.insertMany(playersAndCountries);
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+  }
+};
 
 /**
  * Get all the players playing in ther home country.
@@ -24,6 +70,14 @@ const getPlayersPlayingInTheirCountry = async (
   res: NextApiResponse
 ): Promise<PlayerAndCountry[] | void> => {
   let playersAndCountry: PlayerAndCountry[] = [];
+
+  // Check if today's data cached
+  const cached = await getCachedResults();
+
+  // Return cached results
+  if (cached.length) {
+    return res.status(200).json(cached);
+  }
 
   try {
     const tournaments: TournamentEntity[] = await Tournament.find();
@@ -68,6 +122,9 @@ const getPlayersPlayingInTheirCountry = async (
 
     // Sort players by tournament name
     playersAndCountry.sort((a, b) => a.country.localeCompare(b.country));
+
+    // Cache daily results in dabatase
+    await cacheResults(playersAndCountry);
 
     return res.status(200).json(playersAndCountry);
   } catch (error) {

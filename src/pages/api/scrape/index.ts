@@ -4,7 +4,14 @@ import { Match } from "../../../models/Match";
 import { Player } from "../../../models/Player";
 import { PlayerStats } from "../../../models/PlayerStats";
 import { Tournament } from "../../../models/Tournament";
+import {
+  MatchPlayerProfilesAndDates,
+  MatchPlayerProfilesAndSurfaceRecords,
+  PlayerAndCountry,
+  PlayerEntity,
+} from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
+import { clientPromise } from "../../../utils/mongodb";
 import { resetTests } from "../tests";
 import {
   upsertMatches,
@@ -25,6 +32,25 @@ const scrapeTomorrow = async (
 ): Promise<boolean | void> => {
   let success = true;
 
+  // Start db instance
+  const db = (await clientPromise).db("main");
+  const {
+    PlayersAndCountries,
+    InformPlayers,
+    MatchPlayerProfilesAndDates,
+    MatchPlayerProfilesAndSurfaceRecords,
+  } = {
+    PlayersAndCountries: db.collection<PlayerAndCountry>("playersAndCountries"),
+    InformPlayers: db.collection<PlayerEntity>("informPlayers"),
+    MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
+      "matchPlayerProfilesAndDates"
+    ),
+    MatchPlayerProfilesAndSurfaceRecords:
+      db.collection<MatchPlayerProfilesAndSurfaceRecords>(
+        "matchPlayerProfilesAndSurfaceRecords"
+      ),
+  };
+
   try {
     // Reset all tests
     await resetTests();
@@ -35,6 +61,12 @@ const scrapeTomorrow = async (
       Tournament.deleteMany(),
       Player.deleteMany(),
       PlayerStats.deleteMany(),
+      // Stats collections
+      // @ts-ignore
+      PlayersAndCountries.deleteMany({}),
+      InformPlayers.deleteMany({}),
+      MatchPlayerProfilesAndDates.deleteMany({}),
+      MatchPlayerProfilesAndSurfaceRecords.deleteMany({}),
     ]);
 
     // Scrape schedule

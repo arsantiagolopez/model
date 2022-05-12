@@ -10,10 +10,58 @@ import {
   YearRecord,
 } from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
+import { format } from "../../../utils/formatToMongoEntity";
+import { clientPromise } from "../../../utils/mongodb";
 
 interface PlayersHash {
   [playerId: string]: PlayerEntity;
 }
+
+// Get cached results from database for quicker lookup times
+const getCachedResults = async (): Promise<
+  MatchPlayerProfilesAndSurfaceRecords[]
+> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { MatchPlayerProfilesAndSurfaceRecords } = {
+      MatchPlayerProfilesAndSurfaceRecords:
+        db.collection<MatchPlayerProfilesAndSurfaceRecords>(
+          "matchPlayerProfilesAndSurfaceRecords"
+        ),
+    };
+
+    const results = (
+      await MatchPlayerProfilesAndSurfaceRecords.find().toArray()
+    ).map((entity) => format.from(entity));
+
+    return results;
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+    return [];
+  }
+};
+
+// Store results in database for quick lookup after first load
+const cacheResults = async (
+  entities: MatchPlayerProfilesAndSurfaceRecords[]
+): Promise<void> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { MatchPlayerProfilesAndSurfaceRecords } = {
+      MatchPlayerProfilesAndSurfaceRecords:
+        db.collection<MatchPlayerProfilesAndSurfaceRecords>(
+          "matchPlayerProfilesAndSurfaceRecords"
+        ),
+    };
+
+    // Convert to MongoDB object
+    entities = entities.map((entity) => format.to(entity));
+
+    await MatchPlayerProfilesAndSurfaceRecords.insertMany(entities);
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+  }
+};
 
 /**
  * Get highest current surface record differential between any two players.
@@ -26,6 +74,14 @@ const getHighestSurfaceFormDifferential = async (
   res: NextApiResponse
 ): Promise<MatchPlayerProfilesAndSurfaceRecords[] | void> => {
   const RECORD_DIFFERENTIAL_NUMBER = 5;
+
+  // Check if today's data cached
+  const cached = await getCachedResults();
+
+  // Return cached results
+  if (cached.length) {
+    return res.status(200).json(cached);
+  }
 
   try {
     const playersHash: PlayersHash = {};
@@ -121,6 +177,9 @@ const getHighestSurfaceFormDifferential = async (
       })
       // Only show the most relevant 30 matches
       .slice(0, 30);
+
+    // Cache daily results in dabatase
+    await cacheResults(sortedMatches);
 
     return res.status(200).json(sortedMatches);
   } catch (error) {

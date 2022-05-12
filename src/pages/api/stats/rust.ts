@@ -5,10 +5,54 @@ import { Match } from "../../../models/Match";
 import { Player } from "../../../models/Player";
 import { MatchPlayerProfilesAndDates, PlayerEntity } from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
+import { format } from "../../../utils/formatToMongoEntity";
+import { clientPromise } from "../../../utils/mongodb";
 
 interface PlayerHash {
   [id: string]: PlayerEntity;
 }
+
+// Get cached results from database for quicker lookup times
+const getCachedResults = async (): Promise<MatchPlayerProfilesAndDates[]> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { MatchPlayerProfilesAndDates } = {
+      MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
+        "matchPlayerProfilesAndDates"
+      ),
+    };
+
+    const results = (await MatchPlayerProfilesAndDates.find().toArray()).map(
+      (entity) => format.from(entity)
+    );
+
+    return results;
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+    return [];
+  }
+};
+
+// Store results in database for quick lookup after first load
+const cacheResults = async (
+  entities: MatchPlayerProfilesAndDates[]
+): Promise<void> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { MatchPlayerProfilesAndDates } = {
+      MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
+        "matchPlayerProfilesAndDates"
+      ),
+    };
+
+    // Convert to MongoDB object
+    entities = entities.map((entity) => format.to(entity));
+
+    await MatchPlayerProfilesAndDates.insertMany(entities);
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+  }
+};
 
 /**
  * Get the matches of players with the most time passed between
@@ -21,6 +65,14 @@ const getHighestDifferentialInLastMatchPlayedDate = async (
   _: NextApiRequest,
   res: NextApiResponse
 ): Promise<MatchPlayerProfilesAndDates[] | void> => {
+  // Check if today's data cached
+  const cached = await getCachedResults();
+
+  // Return cached results
+  if (cached.length) {
+    return res.status(200).json(cached);
+  }
+
   try {
     // Create player hash by mapping playerId to player entity
     let playerHash: PlayerHash = {};
@@ -91,6 +143,9 @@ const getHighestDifferentialInLastMatchPlayedDate = async (
       )
       // Only show the most relevant 30 matches
       .slice(0, 30);
+
+    // Cache daily results in dabatase
+    await cacheResults(sortedMatches);
 
     return res.status(200).json(sortedMatches);
   } catch (error) {

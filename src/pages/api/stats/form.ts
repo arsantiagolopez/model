@@ -4,6 +4,47 @@ import { getSession } from "next-auth/react";
 import { Player } from "../../../models/Player";
 import { PlayerEntity } from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
+import { format } from "../../../utils/formatToMongoEntity";
+import { clientPromise } from "../../../utils/mongodb";
+
+// Get cached results from database for quicker lookup times
+const getCachedResults = async (): Promise<PlayerEntity[]> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { InformPlayers } = {
+      InformPlayers: db.collection<PlayerEntity>("informPlayers"),
+    };
+
+    const results = (await InformPlayers.find().toArray()).map((entity) =>
+      format.from(entity)
+    );
+
+    return results;
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+    return [];
+  }
+};
+
+// Store results in database for quick lookup after first load
+const cacheResults = async (players: PlayerEntity[]): Promise<void> => {
+  try {
+    const db = (await clientPromise).db("main");
+    const { InformPlayers } = {
+      InformPlayers: db.collection<PlayerEntity>("informPlayers"),
+    };
+
+    // Convert to MongoDB object
+    players = players.map((entity) => format.to(entity));
+
+    // Make sure the full player profile is loaded before creating entities
+    if (players[0].profile.image) {
+      await InformPlayers.insertMany(players);
+    }
+  } catch (error) {
+    console.log(`Error fetching cached results. Error: ${error}`);
+  }
+};
 
 /**
  * Get top 10 players with the best form in their last 10 games.
@@ -16,6 +57,14 @@ const getTopPlayersWithBestForm = async (
   res: NextApiResponse
 ): Promise<PlayerEntity[] | void> => {
   let players: PlayerEntity[] = [];
+
+  // Check if today's data cached
+  const cached = await getCachedResults();
+
+  // Return cached results
+  if (cached.length) {
+    return res.status(200).json(cached);
+  }
 
   try {
     // Get initial 75 player pool with best form percentage
@@ -71,6 +120,9 @@ const getTopPlayersWithBestForm = async (
     updatedPlayersWithForm = updatedPlayersWithForm
       .sort((a, b) => (Number(b.form) > Number(a.form) ? 1 : -1))
       .slice(0, 10);
+
+    // Cache daily results in dabatase
+    await cacheResults(updatedPlayersWithForm);
 
     return res.status(200).json(updatedPlayersWithForm);
   } catch (error) {

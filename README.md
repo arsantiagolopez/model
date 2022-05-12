@@ -46,9 +46,11 @@
 - Click on any odds at any time and toggle between american and decimal odds.
 - Players form is calculated and visualized, with exact match details and match outcome difficulty graphs.
 - Section of players playing in their home tournaments.
-- Section of players holding a game streak.
+- Section of players holding a current game streak.
 - Section of in-form players. Multiple parameters taken into account, including opponent's strength, tour level, recent losses.
-- Section of ELO, yELO and surface ELO ratings.
+- Section of player rust. Table shows the players with the longest time away from the courts.
+- Section of surface dominance. In tennis, players specialize on specific surfaces. Table shows the highest differential in records between both players, highlighting the most successful players against the least succesful.
+- ATP/WTA full player ranking tables.
 
 <h2 id="tech">‎‍💻 Tech Stack</h2>
 

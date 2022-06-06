@@ -32,10 +32,12 @@
 
 <details open>
   <summary>Mobile</summary>
+  <img src="https://github.com/arsantiagolopez/gifs/blob/main/model/mobile.gif" />
 </details>
 
 <details>
   <summary>Desktop</summary>
+  <img src="https://github.com/arsantiagolopez/gifs/blob/main/model/desktop.gif" />
 </details>
 
 <h2 id="features">🎯 Features</h2>
@@ -181,11 +183,15 @@
 
 <h2 id="inspiration">💡 Inspiration</h2>
 
+I've always loved tennis. When the opportunity arose to partner up with another tennis lover to start a tennis tipping hobby, I thought I could use my programming skills to speed up our research process by automating repetitive steps. The model attempts to analyse and display key factors that could help to predict match outcomes. It's a work in progress, but like any sports model, it only gets better every update.
+
 <h2 id="objectives">🚀 Learning Objectives</h2>
 
 - Scrape larger amounts of data.
 - Best practices for scaleable scraping projects.
-- Efficiently manipulate large sets of data.
+- Efficiently analyse and manipulate large sets of data.
+- Master Tailwind CSS.
+- Master fullstack Next.js.
 
 <h2 id="license">📜 License</h2>
 

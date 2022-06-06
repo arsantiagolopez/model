@@ -126,32 +126,34 @@ const getHighestSurfaceFormDifferential = async (
             surface as keyof YearRecord
           ] as WinLossRecord;
 
-          // Count wins, losses and differentials
-          const homeWins = homeCurrentSurfaceRecord.win;
-          const homeLosses = homeCurrentSurfaceRecord.loss;
-          const awayWins = awayCurrentSurfaceRecord.win;
-          const awayLosses = awayCurrentSurfaceRecord.loss;
+          if (homeCurrentSurfaceRecord && awayCurrentSurfaceRecord) {
+            // Count wins, losses and differentials
+            const homeWins = homeCurrentSurfaceRecord.win;
+            const homeLosses = homeCurrentSurfaceRecord.loss;
+            const awayWins = awayCurrentSurfaceRecord.win;
+            const awayLosses = awayCurrentSurfaceRecord.loss;
 
-          const homeDifferential =
-            Math.abs(homeWins - homeLosses) > RECORD_DIFFERENTIAL_NUMBER;
-          const awayDifferential =
-            Math.abs(awayWins - awayLosses) > RECORD_DIFFERENTIAL_NUMBER;
+            const homeDifferential =
+              Math.abs(homeWins - homeLosses) > RECORD_DIFFERENTIAL_NUMBER;
+            const awayDifferential =
+              Math.abs(awayWins - awayLosses) > RECORD_DIFFERENTIAL_NUMBER;
 
-          // Only consider games where at least one player has a good record
-          if (homeDifferential || awayDifferential) {
-            const matchPlayerProfilesAndSurfaceRecords: MatchPlayerProfilesAndSurfaceRecords =
-              {
-                match,
-                homeProfile,
-                awayProfile,
-                homeCurrentSurfaceRecord,
-                awayCurrentSurfaceRecord,
-              };
+            // Only consider games where at least one player has a good record
+            if (homeDifferential || awayDifferential) {
+              const matchPlayerProfilesAndSurfaceRecords: MatchPlayerProfilesAndSurfaceRecords =
+                {
+                  match,
+                  homeProfile,
+                  awayProfile,
+                  homeCurrentSurfaceRecord,
+                  awayCurrentSurfaceRecord,
+                };
 
-            // Add match to array
-            matchesWithAtLeastOneGoodRecord.push(
-              matchPlayerProfilesAndSurfaceRecords
-            );
+              // Add match to array
+              matchesWithAtLeastOneGoodRecord.push(
+                matchPlayerProfilesAndSurfaceRecords
+              );
+            }
           }
         }
       }

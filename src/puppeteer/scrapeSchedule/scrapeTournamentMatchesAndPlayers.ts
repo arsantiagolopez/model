@@ -14,11 +14,18 @@ const scrapeTournamentMatchesAndPlayers =
     let matches: MatchEntity[] = [];
     let players: PlayerEntity[] = [];
 
-    // const tomorrow = moment(new Date()); // @test - Get today's instead
+    const today = moment(new Date());
     const tomorrow = moment(new Date()).add(1, "day");
-    const year = String(tomorrow.year());
-    const month = tomorrow.format("MM");
-    const day = tomorrow.format("DD");
+
+    // If before noon, get today's schedule
+    // Else, get tomorrow's.
+    const currentHour = Number(moment().format("HH"));
+    const isBeforeNoon = currentHour < 12;
+    const date = isBeforeNoon ? today : tomorrow;
+
+    const day = date.format("DD");
+    const year = String(date.year());
+    const month = date.format("MM");
 
     const types = ["atp-single", "wta-single"];
 

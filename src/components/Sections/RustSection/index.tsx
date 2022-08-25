@@ -2,6 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import useSWR from "swr";
 import { MatchPlayerProfilesAndDates } from "../../../types";
+import { SectionSkeleton } from "../SectionSkeleton";
 import { MatchRustCard } from "./MatchRustCard";
 
 interface Props {
@@ -34,9 +35,13 @@ const RustSection: FC<Props> = ({ setActivePlayerId }) => {
           !isExpanded ? "max-h-[17rem] pb-3" : "max-h-[40rem]"
         }`}
       >
-        {matches?.map((match, index) => (
-          <MatchRustCard key={index} match={match} {...matchRustCardProps} />
-        ))}
+        {!matches ? (
+          <SectionSkeleton isFive />
+        ) : (
+          matches.map((match, index) => (
+            <MatchRustCard key={index} match={match} {...matchRustCardProps} />
+          ))
+        )}
       </div>
     </div>
   );

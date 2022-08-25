@@ -1,6 +1,5 @@
 import moment from "moment";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { Match } from "../../../models/Match";
 import { Player } from "../../../models/Player";
 import { MatchPlayerProfilesAndDates, PlayerEntity } from "../../../types";
@@ -11,48 +10,6 @@ import { clientPromise } from "../../../utils/mongodb";
 interface PlayerHash {
   [id: string]: PlayerEntity;
 }
-
-// Get cached results from database for quicker lookup times
-const getCachedResults = async (): Promise<MatchPlayerProfilesAndDates[]> => {
-  try {
-    const db = (await clientPromise).db("main");
-    const { MatchPlayerProfilesAndDates } = {
-      MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
-        "matchPlayerProfilesAndDates"
-      ),
-    };
-
-    const results = (await MatchPlayerProfilesAndDates.find().toArray()).map(
-      (entity) => format.from(entity)
-    );
-
-    return results;
-  } catch (error) {
-    console.log(`Error fetching cached results. Error: ${error}`);
-    return [];
-  }
-};
-
-// Store results in database for quick lookup after first load
-const cacheResults = async (
-  entities: MatchPlayerProfilesAndDates[]
-): Promise<void> => {
-  try {
-    const db = (await clientPromise).db("main");
-    const { MatchPlayerProfilesAndDates } = {
-      MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
-        "matchPlayerProfilesAndDates"
-      ),
-    };
-
-    // Convert to MongoDB object
-    entities = entities.map((entity) => format.to(entity));
-
-    await MatchPlayerProfilesAndDates.insertMany(entities);
-  } catch (error) {
-    console.log(`Error fetching cached results. Error: ${error}`);
-  }
-};
 
 /**
  * Get the matches of players with the most time passed between
@@ -65,14 +22,35 @@ const getHighestDifferentialInLastMatchPlayedDate = async (
   _: NextApiRequest,
   res: NextApiResponse
 ): Promise<MatchPlayerProfilesAndDates[] | void> => {
-  // Check if today's data cached
-  const cached = await getCachedResults();
+  try {
+    const db = (await clientPromise).db("model");
+    const { MatchPlayerProfilesAndDates } = {
+      MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
+        "matchPlayerProfilesAndDates"
+      ),
+    };
 
-  // Return cached results
-  if (cached.length) {
-    return res.status(200).json(cached);
+    const results = (await MatchPlayerProfilesAndDates.find().toArray()).map(
+      (entity) => format.from(entity)
+    );
+
+    return res.status(200).json(results);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json(error);
   }
+};
 
+/**
+ * Store players and rust stats in database.
+ * @param req - HTTP Request object.
+ * @param res - HTTP Response object.
+ * @returns a success boolean on completion.
+ */
+export const storeRustStatsOnDb = async (
+  _: NextApiRequest,
+  res: NextApiResponse
+): Promise<boolean | void> => {
   try {
     // Create player hash by mapping playerId to player entity
     let playerHash: PlayerHash = {};
@@ -145,25 +123,34 @@ const getHighestDifferentialInLastMatchPlayedDate = async (
       .slice(0, 30);
 
     // Cache daily results in dabatase
-    await cacheResults(sortedMatches);
+    const db = (await clientPromise).db("model");
+    const { MatchPlayerProfilesAndDates } = {
+      MatchPlayerProfilesAndDates: db.collection<MatchPlayerProfilesAndDates>(
+        "matchPlayerProfilesAndDates"
+      ),
+    };
 
-    return res.status(200).json(sortedMatches);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json(error);
+    // Convert to MongoDB object
+    const entities = sortedMatches.map((entity) => format.to(entity));
+    await MatchPlayerProfilesAndDates.insertMany(entities);
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json(false);
   }
 };
 
 // Main
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = await getSession({ req });
+  // const data = await getSession({ req });
   const { method } = req;
 
-  const isAdmin = data?.user.isAdmin;
+  // const isAdmin = data?.user.isAdmin;
 
-  if (!isAdmin) {
-    return res.status(405).end("Must be an admin to access the model.");
-  }
+  // if (!isAdmin) {
+  //   return res.status(405).end("Must be an admin to access the model.");
+  // }
 
   await dbConnect();
 

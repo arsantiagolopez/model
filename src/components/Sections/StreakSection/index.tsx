@@ -8,6 +8,7 @@ import React, {
 import { GoChevronDown } from "react-icons/go";
 import useSWR from "swr";
 import { PlayerEntity } from "../../../types";
+import { SectionSkeleton } from "../SectionSkeleton";
 import { PlayerStreakCard } from "./PlayerStreakCard";
 
 interface Props {
@@ -44,13 +45,17 @@ const StreakSection: FC<Props> = ({ setActivePlayerId }) => {
         <GoChevronDown className={`text-xl ${isExpanded && "rotate-180"}`} />
       </div>
 
-      {players?.map((player) => (
-        <PlayerStreakCard
-          key={player?.playerId}
-          player={player}
-          {...playerStreakCardProps}
-        />
-      ))}
+      {!players ? (
+        <SectionSkeleton isFive />
+      ) : (
+        players.map((player) => (
+          <PlayerStreakCard
+            key={player?.playerId}
+            player={player}
+            {...playerStreakCardProps}
+          />
+        ))
+      )}
     </div>
   );
 };

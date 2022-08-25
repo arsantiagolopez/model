@@ -2,6 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import useSWR from "swr";
 import { MatchPlayerProfilesAndSurfaceRecords } from "../../../types";
+import { SectionSkeleton } from "../SectionSkeleton";
 import { MatchDominanceCard } from "./MatchDominanceCard";
 
 interface Props {
@@ -34,13 +35,17 @@ const SurfaceSection: FC<Props> = ({ setActivePlayerId }) => {
           !isExpanded ? "max-h-[17rem] pb-3" : "max-h-[40rem]"
         }`}
       >
-        {matches?.map((match, index) => (
-          <MatchDominanceCard
-            key={index}
-            match={match}
-            {...matchDominanceCardProps}
-          />
-        ))}
+        {!matches ? (
+          <SectionSkeleton />
+        ) : (
+          matches.map((match, index) => (
+            <MatchDominanceCard
+              key={index}
+              match={match}
+              {...matchDominanceCardProps}
+            />
+          ))
+        )}
       </div>
     </div>
   );

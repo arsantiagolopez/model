@@ -52,7 +52,7 @@ const parseStringToDate = ({
 
       str = `${day}.${month}, ${hours}:${minutes}, ${year}`;
 
-      return moment(str, "DD.MM, kk:mm, YYYY").toDate();
+      return moment(str, "DD.MM, HH:mm, YYYY").toDate();
     } else {
       // String doesn't follow fomart
       return undefined;
@@ -72,7 +72,7 @@ const parseStringToDate = ({
 
     str = `${day}.${month}, ${hours}:${minutes}, ${year}`;
 
-    return moment(str, "DD.MM, kk:mm, YYYY").toDate();
+    return moment(str, "DD.MM, HH:mm, YYYY").toDate();
 
     // String doesn't follow fomart
     // return undefined;

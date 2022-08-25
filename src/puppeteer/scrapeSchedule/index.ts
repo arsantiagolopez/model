@@ -1,3 +1,4 @@
+import moment from "moment";
 import {
   MatchEntity,
   PlayerEntity,
@@ -39,6 +40,33 @@ const scrapeSchedule = async (): Promise<ScrapeScheduleResponse> => {
         tournament?.toLowerCase().includes(keyword)
       );
       if (!isExcluded) return match;
+    });
+
+    // Convert string dates to Date objects
+    matches = matches.map((match) => {
+      const { date: dateStr } = match;
+
+      let date: string | Date | undefined = undefined;
+
+      if (dateStr) {
+        // TennisExplorer time 5 hours ahead
+        // Subtract 5 hours for real time
+        // const hours = Number((dateStr as string)?.substring(0, 2)) - 5;
+        const hours = Number((dateStr as string)?.substring(0, 2));
+        const minutes = Number((dateStr as string).substring(3, 5));
+
+        // const tomorrowDate = moment(new Date())
+        //   .add(1, "day")
+        //   .format("YYYY-MM-DD");
+
+        // date = moment(tomorrowDate)
+        date = moment(new Date())
+          .set("hour", hours)
+          .set("minute", minutes)
+          .toDate();
+      }
+
+      return { ...match, date };
     });
 
     // Note. Partial player entities related to unsupported

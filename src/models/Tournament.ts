@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { TournamentEntity } from "../types";
 
-const { model, models, Schema } = mongoose;
+const { models, Schema } = mongoose;
 
 const TournamentShema = new Schema<Partial<TournamentEntity>>(
   {
@@ -57,9 +57,11 @@ const TournamentShema = new Schema<Partial<TournamentEntity>>(
   { timestamps: true }
 );
 
+const modelDb = mongoose.connection.useDb("model");
+
 // Prevent model overwrite upon initial compile
 const Tournament =
   models.Tournament ||
-  model<Partial<TournamentEntity>>("Tournament", TournamentShema);
+  modelDb.model<Partial<TournamentEntity>>("Tournament", TournamentShema);
 
 export { Tournament };

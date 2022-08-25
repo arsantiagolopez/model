@@ -3,11 +3,12 @@ import { useSession } from "next-auth/react";
 import Head from "next/head";
 import React from "react";
 import { Dashboard } from "../components/Dashboard";
-import { Landing } from "../components/Landing";
 import { Layout } from "../components/Layout";
 
 const IndexPage: NextPage = () => {
   const { data } = useSession();
+
+  console.log(data);
 
   const isAdmin = !!data?.user?.isAdmin;
 
@@ -23,7 +24,10 @@ const IndexPage: NextPage = () => {
         </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout {...layoutProps}>{isAdmin ? <Dashboard /> : <Landing />}</Layout>
+      {/* <Layout {...layoutProps}>{isAdmin ? <Dashboard /> : <Landing />}</Layout> */}
+      <Layout {...layoutProps}>
+        <Dashboard />
+      </Layout>
     </>
   );
 };

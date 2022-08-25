@@ -8,6 +8,7 @@ import React, {
 import { GoChevronDown } from "react-icons/go";
 import useSWR from "swr";
 import { PlayerEntity } from "../../../types";
+import { SectionSkeleton } from "../SectionSkeleton";
 import { PlayerFormCard } from "./PlayerFormCard";
 
 interface Props {
@@ -43,13 +44,17 @@ const FormSection: FC<Props> = ({ setActivePlayerId }) => {
         <h1 className="truncate">Top Form (Last 5) 🌟</h1>
         <GoChevronDown className={`text-xl ${isExpanded && "rotate-180"}`} />
       </div>
-      {players?.map((player) => (
-        <PlayerFormCard
-          key={player?.playerId}
-          player={player}
-          {...playerFormCardProps}
-        />
-      ))}
+      {!players ? (
+        <SectionSkeleton isFive />
+      ) : (
+        players.map((player) => (
+          <PlayerFormCard
+            key={player?.playerId}
+            player={player}
+            {...playerFormCardProps}
+          />
+        ))
+      )}
     </div>
   );
 };

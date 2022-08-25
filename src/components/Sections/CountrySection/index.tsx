@@ -8,6 +8,7 @@ import React, {
 import { GoChevronDown } from "react-icons/go";
 import useSWR from "swr";
 import { PlayerAndCountry } from "../../../types";
+import { SectionSkeleton } from "../SectionSkeleton";
 import { PlayerCountryCard } from "./PlayerCountryCard";
 
 interface Props {
@@ -47,13 +48,17 @@ const CountrySection: FC<Props> = ({ setActivePlayerId }) => {
           !isExpanded ? "max-h-[17rem] pb-3" : "max-h-[40rem]"
         }`}
       >
-        {players?.map((player) => (
-          <PlayerCountryCard
-            key={player?.player?.playerId}
-            player={player}
-            {...playerCountryCardProps}
-          />
-        ))}
+        {!players ? (
+          <SectionSkeleton isFive />
+        ) : (
+          players.map((player) => (
+            <PlayerCountryCard
+              key={player?.player?.playerId}
+              player={player}
+              {...playerCountryCardProps}
+            />
+          ))
+        )}
       </div>
     </div>
   );

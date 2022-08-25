@@ -88,7 +88,7 @@ const Schedule: FC<Props> = ({
 
   // Create tournament & points hashmap
   useEffect(() => {
-    if (tournamentDetails) {
+    if (tournamentDetails?.length) {
       const hashmap = tournamentDetails.reduce(
         (obj, { tournamentId, points, countryCode }) => ({
           ...obj,
@@ -137,7 +137,7 @@ const Schedule: FC<Props> = ({
   return (
     <div
       className={`md:block rounded-md bg-tertiary p-2 md:p-4 text-white text-xs w-full mb-4 md:mb-10 ${
-        isExpanded ? "md:py-2 md:px-4" : "md:p-2 md:px-4 px-3"
+        isExpanded ? "md:py-2 md:px-4" : "md:p-2 md:px-4"
       } ${activeMatchId && "hidden"}`}
     >
       <div
@@ -174,7 +174,8 @@ const Schedule: FC<Props> = ({
               matches.map(
                 (
                   {
-                    _id,
+                    // @ts-ignore
+                    id,
                     matchId,
                     tournament,
                     tournamentLink,
@@ -195,15 +196,17 @@ const Schedule: FC<Props> = ({
                     (matches &&
                       matches[index - 1]?.tournamentLink !== tournamentLink);
 
-                  const isValidDate = moment(date, "kk:mm").isValid();
+                  const isValidDate = moment(date).isValid();
                   const time = isValidDate
-                    ? moment(date, "kk:mm").format("kk:mm")
+                    ? moment(date).format("HH:mm")
                     : "--:--";
 
                   const { surface, type } =
-                    tournamentDetails?.find(
-                      (detatils) => detatils?.tournamentId === tournamentLink
-                    ) || {};
+                    (tournamentDetails?.length &&
+                      tournamentDetails?.find(
+                        (details) => details.tournamentId === tournamentLink
+                      )) ||
+                    {};
 
                   const typeEmojis = type === "singles" ? "🎾" : "🎾🎾";
                   const countryEmoji = detailsHash
@@ -211,7 +214,7 @@ const Schedule: FC<Props> = ({
                     : null;
 
                   return (
-                    <div key={_id} className="flex flex-col">
+                    <div key={id || index} className="flex flex-col">
                       {/* New tournament header (1 row) */}
                       {isNewTournament && (
                         <div

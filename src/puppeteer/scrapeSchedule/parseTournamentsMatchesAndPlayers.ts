@@ -136,17 +136,8 @@ const parseTournamentsMatchesAndPlayers = async (
               .querySelector("td[class='first time']")
               ?.textContent?.slice(0, 5);
 
-            // Parse date if date is valid
-            if (!date?.includes("--:--")) {
-              const today = new Date();
-              const tomorrow = new Date(today);
-              tomorrow.setDate(tomorrow.getDate() + 1);
-
-              const hours = Number(date?.substring(0, 2));
-              const minutes = Number(date?.substring(3, 5));
-
-              date = new Date(tomorrow.setHours(hours, minutes)).toISOString();
-            } else {
+            // Omit date if not valid
+            if (date?.includes("--:--")) {
               // Don't include date
               date = undefined;
             }

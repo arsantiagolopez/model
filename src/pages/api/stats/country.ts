@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { Player } from "../../../models/Player";
 import { Tournament } from "../../../models/Tournament";
 import {
@@ -15,50 +14,6 @@ interface TournamentHash {
   [tournamendId: string]: Record<string, string>;
 }
 
-// Get cached results from database for quicker lookup times
-const getCachedResults = async (): Promise<PlayerAndCountry[]> => {
-  try {
-    const db = (await clientPromise).db("main");
-    const { PlayersAndCountries } = {
-      PlayersAndCountries: db.collection<PlayerAndCountry>(
-        "playersAndCountries"
-      ),
-    };
-
-    const results = (await PlayersAndCountries.find().toArray()).map((entity) =>
-      format.from(entity)
-    );
-
-    return results;
-  } catch (error) {
-    console.log(`Error fetching cached results. Error: ${error}`);
-    return [];
-  }
-};
-
-// Store results in database for quick lookup after first load
-const cacheResults = async (
-  playersAndCountries: PlayerAndCountry[]
-): Promise<void> => {
-  try {
-    const db = (await clientPromise).db("main");
-    const { PlayersAndCountries } = {
-      PlayersAndCountries: db.collection<PlayerAndCountry>(
-        "playersAndCountries"
-      ),
-    };
-
-    // Convert to MongoDB object
-    playersAndCountries = playersAndCountries.map((entity) =>
-      format.to(entity)
-    );
-
-    await PlayersAndCountries.insertMany(playersAndCountries);
-  } catch (error) {
-    console.log(`Error fetching cached results. Error: ${error}`);
-  }
-};
-
 /**
  * Get all the players playing in ther home country.
  * @param req - HTTP Request object.
@@ -69,15 +24,36 @@ const getPlayersPlayingInTheirCountry = async (
   _: NextApiRequest,
   res: NextApiResponse
 ): Promise<PlayerAndCountry[] | void> => {
-  let playersAndCountry: PlayerAndCountry[] = [];
+  try {
+    const db = (await clientPromise).db("model");
+    const { PlayersAndCountries } = {
+      PlayersAndCountries: db.collection<PlayerAndCountry>(
+        "playersAndCountries"
+      ),
+    };
 
-  // Check if today's data cached
-  const cached = await getCachedResults();
+    const results = (await PlayersAndCountries.find().toArray()).map((entity) =>
+      format.from(entity)
+    );
 
-  // Return cached results
-  if (cached.length) {
-    return res.status(200).json(cached);
+    return res.status(200).json(results);
+  } catch (err) {
+    console.log(`Error fetching cached results. Error: ${err}`);
+    return res.status(400).json({ message: err });
   }
+};
+
+/**
+ * Store players and countries results in database.
+ * @param req - HTTP Request object.
+ * @param res - HTTP Response object.
+ * @returns a success boolean on completion.
+ */
+export const storeCountryStatsOnDb = async (
+  _: NextApiRequest,
+  res: NextApiResponse
+): Promise<boolean | void> => {
+  let playersAndCountry: PlayerAndCountry[] = [];
 
   try {
     const tournaments: TournamentEntity[] = await Tournament.find();
@@ -124,25 +100,37 @@ const getPlayersPlayingInTheirCountry = async (
     playersAndCountry.sort((a, b) => a.country.localeCompare(b.country));
 
     // Cache daily results in dabatase
-    await cacheResults(playersAndCountry);
+    const db = (await clientPromise).db("model");
+    const { PlayersAndCountries } = {
+      PlayersAndCountries: db.collection<PlayerAndCountry>(
+        "playersAndCountries"
+      ),
+    };
 
-    return res.status(200).json(playersAndCountry);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json(playersAndCountry);
+    // Convert to MongoDB object
+    const playersAndCountries = playersAndCountry.map((entity) =>
+      format.to(entity)
+    );
+
+    await PlayersAndCountries.insertMany(playersAndCountries);
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json(false);
   }
 };
 
 // Main
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = await getSession({ req });
+  // const data = await getSession({ req });
   const { method } = req;
 
-  const isAdmin = data?.user.isAdmin;
+  // const isAdmin = data?.user.isAdmin;
 
-  if (!isAdmin) {
-    return res.status(405).end("Must be an admin to access the model.");
-  }
+  // if (!isAdmin) {
+  //   return res.status(405).end("Must be an admin to access the model.");
+  // }
 
   await dbConnect();
 

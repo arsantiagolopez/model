@@ -12,11 +12,16 @@ import {
 } from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
 import { clientPromise } from "../../../utils/mongodb";
+import { storeCountryStatsOnDb } from "../stats/country";
+import { storeInformPlayersOnDb } from "../stats/form";
+import { storeRustStatsOnDb } from "../stats/rust";
+import { storeSurfaceStatsOnDb } from "../stats/surface";
 import { resetTests } from "../tests";
 import {
   upsertMatches,
   upsertPlayers,
   upsertSchedule,
+  upsertStats,
   upsertTournaments,
 } from "./[id]";
 
@@ -27,13 +32,13 @@ import {
  * @returns a success boolean.
  */
 const scrapeTomorrow = async (
-  _: NextApiRequest,
+  req: NextApiRequest,
   res: NextApiResponse
 ): Promise<boolean | void> => {
   let success = true;
 
   // Start db instance
-  const db = (await clientPromise).db("main");
+  const db = (await clientPromise).db("model");
   const {
     PlayersAndCountries,
     InformPlayers,
@@ -71,7 +76,6 @@ const scrapeTomorrow = async (
 
     // Scrape schedule
     success = await upsertSchedule();
-
     if (!success) return success;
 
     // Scrape tournaments
@@ -86,11 +90,21 @@ const scrapeTomorrow = async (
     success = await upsertPlayers();
     if (!success) return success;
 
-    // // Scrape stats
-    // success = await upsertStats();
+    // Scrape stats
+    success = await upsertStats();
+    if (!success) return success;
+
+    // // Scrape results
+    // success = await upsertResults();
     // if (!success) return success;
 
-    // All data should be scrape by now
+    // All data should be scraped by now
+
+    // Cache all stats
+    await storeCountryStatsOnDb(req, res);
+    await storeInformPlayersOnDb(req, res);
+    await storeRustStatsOnDb(req, res);
+    await storeSurfaceStatsOnDb(req, res);
 
     return res.status(200).json(success);
   } catch (error) {

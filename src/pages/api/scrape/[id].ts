@@ -3,9 +3,11 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { Match } from "../../../models/Match";
 import { Player } from "../../../models/Player";
+import { Result } from "../../../models/Result";
 import { Tournament } from "../../../models/Tournament";
 import { scrapeMatches } from "../../../puppeteer/scrapeMatches";
 import { scrapePlayers } from "../../../puppeteer/scrapePlayers";
+import { scrapeResults } from "../../../puppeteer/scrapeResults";
 import { scrapeSchedule } from "../../../puppeteer/scrapeSchedule";
 import { scrapeTournaments } from "../../../puppeteer/scrapeTournaments";
 import { MatchEntity, PlayerEntity, TournamentEntity } from "../../../types";
@@ -307,6 +309,36 @@ export const upsertStats = async (
 
     // Scrape was successful
     await updateTest("stats", success);
+
+    return res?.status(200).json(success) || success;
+  } catch (error) {
+    success = false;
+    console.log(error);
+    return res?.status(400).json(success) || success;
+  }
+};
+
+// Update existing results with new or updated entities.
+export const upsertResults = async (
+  _?: NextApiRequest,
+  res?: NextApiResponse
+): Promise<boolean> => {
+  let success = true;
+
+  try {
+    // Get entities ready to be upserted to database
+    const results = await scrapeResults();
+
+    // Upsert result entities
+    for await (const result of results) {
+      const { matchId } = result;
+      await Result.updateOne({ matchId }, result, {
+        upsert: true,
+      });
+    }
+
+    // Grade user bets
+    // await gradeUserBets()
 
     return res?.status(200).json(success) || success;
   } catch (error) {

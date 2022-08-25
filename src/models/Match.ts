@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { MatchEntity } from "../types";
 
-const { model, models, Schema } = mongoose;
+const { models, Schema } = mongoose;
 
 const MatchSchema = new Schema<MatchEntity>(
   {
@@ -93,7 +93,9 @@ const MatchSchema = new Schema<MatchEntity>(
   { timestamps: true }
 );
 
+const modelDb = mongoose.connection.useDb("model");
+
 // Prevent model overwrite upon initial compile
-const Match = models.Match || model<MatchEntity>("Match", MatchSchema);
+const Match = models.Match || modelDb.model<MatchEntity>("Match", MatchSchema);
 
 export { Match };

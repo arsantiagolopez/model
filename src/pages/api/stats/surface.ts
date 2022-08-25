@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import { Match } from "../../../models/Match";
 import { Player } from "../../../models/Player";
 import {
@@ -17,12 +16,18 @@ interface PlayersHash {
   [playerId: string]: PlayerEntity;
 }
 
-// Get cached results from database for quicker lookup times
-const getCachedResults = async (): Promise<
-  MatchPlayerProfilesAndSurfaceRecords[]
-> => {
+/**
+ * Get highest current surface record differential between any two players.
+ * @param req - HTTP Request object.
+ * @param res - HTTP Response object.
+ * @returns an array of matches.
+ */
+const getHighestSurfaceFormDifferential = async (
+  _: NextApiRequest,
+  res: NextApiResponse
+): Promise<MatchPlayerProfilesAndSurfaceRecords[] | void> => {
   try {
-    const db = (await clientPromise).db("main");
+    const db = (await clientPromise).db("model");
     const { MatchPlayerProfilesAndSurfaceRecords } = {
       MatchPlayerProfilesAndSurfaceRecords:
         db.collection<MatchPlayerProfilesAndSurfaceRecords>(
@@ -34,54 +39,24 @@ const getCachedResults = async (): Promise<
       await MatchPlayerProfilesAndSurfaceRecords.find().toArray()
     ).map((entity) => format.from(entity));
 
-    return results;
-  } catch (error) {
-    console.log(`Error fetching cached results. Error: ${error}`);
-    return [];
-  }
-};
-
-// Store results in database for quick lookup after first load
-const cacheResults = async (
-  entities: MatchPlayerProfilesAndSurfaceRecords[]
-): Promise<void> => {
-  try {
-    const db = (await clientPromise).db("main");
-    const { MatchPlayerProfilesAndSurfaceRecords } = {
-      MatchPlayerProfilesAndSurfaceRecords:
-        db.collection<MatchPlayerProfilesAndSurfaceRecords>(
-          "matchPlayerProfilesAndSurfaceRecords"
-        ),
-    };
-
-    // Convert to MongoDB object
-    entities = entities.map((entity) => format.to(entity));
-
-    await MatchPlayerProfilesAndSurfaceRecords.insertMany(entities);
-  } catch (error) {
-    console.log(`Error fetching cached results. Error: ${error}`);
+    return res.status(200).json(results);
+  } catch (err) {
+    console.log(`Error fetching cached results. Error: ${err}`);
+    return res.status(400).json({ message: err });
   }
 };
 
 /**
- * Get highest current surface record differential between any two players.
+ * Store surface dominance stats in database.
  * @param req - HTTP Request object.
  * @param res - HTTP Response object.
- * @returns an array of matches.
+ * @returns a success boolean on completion.
  */
-const getHighestSurfaceFormDifferential = async (
+export const storeSurfaceStatsOnDb = async (
   _: NextApiRequest,
   res: NextApiResponse
-): Promise<MatchPlayerProfilesAndSurfaceRecords[] | void> => {
+): Promise<boolean | void> => {
   const RECORD_DIFFERENTIAL_NUMBER = 5;
-
-  // Check if today's data cached
-  const cached = await getCachedResults();
-
-  // Return cached results
-  if (cached.length) {
-    return res.status(200).json(cached);
-  }
 
   try {
     const playersHash: PlayersHash = {};
@@ -180,26 +155,36 @@ const getHighestSurfaceFormDifferential = async (
       // Only show the most relevant 30 matches
       .slice(0, 30);
 
-    // Cache daily results in dabatase
-    await cacheResults(sortedMatches);
+    // Store results in database
+    const db = (await clientPromise).db("model");
+    const { MatchPlayerProfilesAndSurfaceRecords } = {
+      MatchPlayerProfilesAndSurfaceRecords:
+        db.collection<MatchPlayerProfilesAndSurfaceRecords>(
+          "matchPlayerProfilesAndSurfaceRecords"
+        ),
+    };
 
-    return res.status(200).json(sortedMatches);
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json(error);
+    // Convert to MongoDB object
+    const entities = sortedMatches.map((entity) => format.to(entity));
+    await MatchPlayerProfilesAndSurfaceRecords.insertMany(entities);
+
+    return true;
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json(err);
   }
 };
 
 // Main
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const data = await getSession({ req });
+  // const data = await getSession({ req });
   const { method } = req;
 
-  const isAdmin = data?.user.isAdmin;
+  // const isAdmin = data?.user.isAdmin;
 
-  if (!isAdmin) {
-    return res.status(405).end("Must be an admin to access the model.");
-  }
+  // if (!isAdmin) {
+  //   return res.status(405).end("Must be an admin to access the model.");
+  // }
 
   await dbConnect();
 

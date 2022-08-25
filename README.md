@@ -1,7 +1,7 @@
 <div align="center">
     <img src="https://i.ibb.co/1rZDsn6/centered.png" width="90%"/>
     <a href="https://themodel.vercel.app" style="color: #303030;"><h1>The Model</h1></a>
-    <h4>Tennis model to display, analize and predict upcoming ATP, WTA and ITF matches. Stats like surface records, form, home court advantage, ELOs and others are calculated.</h4>
+    <h4>Tennis model that displays, analyzes and predicts upcoming ATP, WTA and ITF matches. It calculates key stats, including surface records, form, home court advantage, ELOs and others to educate fans and potentially help predict match outcomes.</h4>
 </div>
 
 <div align="center">
@@ -43,13 +43,13 @@
 <h2 id="features">🎯 Features</h2>
 
 - Get a schedule of all of tomorrow's tennis matches.
-- The schedule includes matches from every tournament, head to head history, home and away odds.
-- Every match includes the players' ranking, surface history, start time, and corresponding odds - moneyline, spreads and totals - in both american and decimal formats.
-- Click on any odds at any time and toggle between american and decimal odds.
-- Players form is calculated and visualized, with exact match details and match outcome difficulty graphs.
+- The schedule includes matches from every tournament, head-to-head history, home and away odds, etc.
+- Every match includes the players' ranking, surface history, start time, and corresponding odds - moneyline, spreads and totals - in both American and decimal formats.
+- Click on any odds at any time and toggle between American and decimal odds.
+- A player's form is calculated and visualized, with exact match details and match outcome difficulty graphs.
 - Section of players playing in their home tournaments.
 - Section of players holding a current game streak.
-- Section of in-form players. Multiple parameters taken into account, including opponent's strength, tour level, recent losses.
+- Section of in-form players. Multiple parameters are taken into account, including opponent's strength, tour level and recent losses.
 - Section of player rust. Table shows the players with the longest time away from the courts.
 - Section of surface dominance. In tennis, players specialize on specific surfaces. Table shows the highest differential in records between both players, highlighting the most successful players against the least succesful.
 - ATP/WTA full player ranking tables.
@@ -69,11 +69,11 @@
   </tr>
   <tr>
       <td><a href="https://reactjs.org/">React</a></td>
-      <td>To build a component based user interface.</td>
+      <td>Build a component-based user interface.</td>
   </tr>
   <tr>
       <td><a href="https://nextjs.org/">Next.js</a></td>
-      <td>Server side rendering (SSR) of React components.</td>
+      <td>Server-side rendering (SSR) of React components.</td>
   </tr>
     <tr>
       <td><a href="https://pptr.dev/">Puppeteer</a></td>
@@ -81,7 +81,7 @@
   </tr>
   <tr>
       <td><a href="https://github.com/thomasdondorf/puppeteer-cluster">Puppeteer Cluster</a></td>
-      <td>Run mutliple instances of puppeteer in parallel.</td>
+      <td>Run multiple instances of Puppeteer in parallel.</td>
   </tr>
   <tr>
     <td><a href="https://recharts.org/en-US/">Recharts</td>
@@ -105,7 +105,7 @@
   </tr>
   <tr>
       <td><a href="https://axios-http.com/docs/intro">Axios</a></td>
-      <td>HTTP promise based data fetching requests.</td>
+      <td>HTTP promise-based data fetching requests.</td>
   </tr>
   <tr>
       <td><a href="https://momentjs.com/">Moment.js</a></td>
@@ -135,7 +135,7 @@
     </tr>
         <tr>
         <td><a href="https://www.mongodb.com/">MongoDB</a></td>
-        <td>NoSQL document based database.</td>
+        <td>NoSQL document-based database.</td>
     </tr>
     <tr>
         <td><a href="https://www.mongoose.com/">Mongoose</a></td>
@@ -147,7 +147,8 @@
     </tr>
      <tr>
       <td><a href="https://axios-http.com/docs/intro">Axios</a></td>
-      <td>Fetch data with promise based HTTP requests.</td>
+      <td>Fetch data with promise-based HTTP requests.
+</td>
   </tr>
     <tr>
         <td>REST API</td>
@@ -183,13 +184,13 @@
 
 <h2 id="inspiration">💡 Inspiration</h2>
 
-I've always loved tennis. When the opportunity arose to partner up with another tennis lover to start a tennis tipping hobby, I thought I could use my programming skills to speed up our research process by automating repetitive steps. The model attempts to analyse and display key factors that could help to predict match outcomes. It's a work in progress, but like any sports model, it only gets better every update.
+I've always loved tennis. When the opportunity arose to partner with another tennis lover to start a tennis tipping hobby, I knew I could use my programming skills to speed up our research process by automating repetitive steps. The model attempts to analyze and display key factors that could help to predict match outcomes. It's a work in progress, but like any sports model, it only gets better with every update.
 
 <h2 id="objectives">🚀 Learning Objectives</h2>
 
 - Scrape larger amounts of data.
-- Best practices for scaleable scraping projects.
-- Efficiently analyse and manipulate large sets of data.
+- Best practices for scalable scraping projects.
+- Efficiently analyze and manipulate large sets of data.
 - Master Tailwind CSS.
 - Master fullstack Next.js.
 

@@ -13,37 +13,40 @@
   "dependencies": {
     "@headlessui/react": "^1.5.0",
     "@next-auth/mongodb-adapter": "^1.0.3",
+    "argon2": "^0.28.2",
     "axios": "^0.26.0",
     "moment": "^2.29.2",
     "moment-timezone": "^0.5.34",
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.9",
     "next": "12.1.0",
-    "next-auth": "^4.2.1",
+    "next-auth": "^4.23.1",
     "puppeteer": "^13.5.2",
     "puppeteer-cluster": "^0.23.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-icons": "^4.3.1",
-    "react-papaparse": "^4.0.2",
-    "react-table": "^7.7.0",
-    "react-window": "^1.8.7",
+    "react-papaparse": "^4.4.0",
+    "react-table": "^7.8.0",
+    "react-window": "^1.8.10",
     "recharts": "^2.1.9",
-    "swr": "^1.2.2"
+    "swr": "^1.2.2",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.97",
     "@types/node": "17.0.19",
     "@types/puppeteer": "^5.4.5",
     "@types/react": "17.0.39",
-    "@types/react-table": "^7.7.11",
-    "@types/react-window": "^1.8.5",
+    "@types/react-table": "^7.7.19",
+    "@types/react-window": "^1.8.8",
     "@types/recharts": "^1.8.23",
+    "@types/uuid": "^8.3.3",
     "autoprefixer": "^10.4.2",
     "eslint": "8.9.0",
     "eslint-config-next": "12.1.0",
     "postcss": "^8.4.6",
     "tailwindcss": "^3.0.23",
-    "typescript": "^5.3.3"
+    "typescript": "4.5.5"
   }
 }

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { Column, useBlockLayout, useSortBy, useTable } from "react-table";
 import { FixedSizeList } from "react-window";
 import atp_players from "../../data/atp_players.json";
@@ -104,7 +104,7 @@ const RankingTable: FC<Props> = ({ tour }) => {
       );
     },
     [prepareRow, rows]
-  );
+  ) as (args: any) => any;
 
   return (
     <div className="mt-2" {...getTableProps()}>

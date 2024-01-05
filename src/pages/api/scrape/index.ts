@@ -31,7 +31,7 @@ import {
  * @param res - HTTP response.
  * @returns a success boolean.
  */
-const scrapeTomorrow = async (
+export const scrapeTomorrow = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<boolean | void> => {

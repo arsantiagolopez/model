@@ -280,8 +280,8 @@ export const upsertPlayers = async (
 
 // Update existing stats entities with more details.
 export const upsertStats = async (
-  req: NextApiRequest,
-  res: NextApiResponse
+  req?: NextApiRequest,
+  res?: NextApiResponse
 ): Promise<boolean> => {
   let success = true;
 
@@ -289,7 +289,9 @@ export const upsertStats = async (
     // Reset stats test
     await updateTest("stats");
 
-    await storeSurfaceStatsOnDb(req, res);
+    if (req && res) {
+      await storeSurfaceStatsOnDb(req, res);
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////
 

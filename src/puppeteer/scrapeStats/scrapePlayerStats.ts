@@ -1,6 +1,6 @@
-import { Cluster } from "puppeteer-cluster";
 import { PlayerStatsEntity } from "../../types/stats";
 import { parseStats } from "./parseStats";
+import puppeteerClient from "..";
 
 /**
  * Scrape players detailed information
@@ -19,10 +19,7 @@ const scrapePlayerStats = async (
 
   try {
     // Create a cluster with 10 workers
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-    });
+    const cluster = await puppeteerClient();
 
     // Crawl each match main page
     links.map((link) => cluster.queue(link));

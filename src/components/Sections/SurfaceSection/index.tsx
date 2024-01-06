@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { GoChevronDown } from "react-icons/go";
 import useSWR from "swr";
 import { MatchPlayerProfilesAndSurfaceRecords } from "../../../types";

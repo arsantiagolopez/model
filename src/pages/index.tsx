@@ -1,14 +1,11 @@
 import type { NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
-import React from "react";
 import { Dashboard } from "../components/Dashboard";
 import { Layout } from "../components/Layout";
 
 const IndexPage: NextPage = () => {
   const { data } = useSession();
-
-  console.log(data);
 
   const isAdmin = !!data?.user?.isAdmin;
 

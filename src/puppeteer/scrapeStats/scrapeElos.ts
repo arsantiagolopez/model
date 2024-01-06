@@ -1,6 +1,6 @@
-import { Cluster } from "puppeteer-cluster";
 import { EloRanking } from "../../types/stats";
 import { parseElos } from "./parseElos";
+import puppeteerClient from "..";
 
 const scrapeElos = async (): Promise<EloRanking[]> => {
   let eloRankings: EloRanking[] = [];
@@ -16,10 +16,7 @@ const scrapeElos = async (): Promise<EloRanking[]> => {
 
   try {
     // Create a cluster with 10 workers
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-    });
+    const cluster = await puppeteerClient();
 
     // Crawl each match main page
     links.map((link) => cluster.queue(link));

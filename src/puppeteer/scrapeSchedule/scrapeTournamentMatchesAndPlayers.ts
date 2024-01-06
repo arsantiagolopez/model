@@ -1,5 +1,4 @@
 import moment from "moment";
-import { Cluster } from "puppeteer-cluster";
 import {
   MatchEntity,
   PlayerEntity,
@@ -7,6 +6,7 @@ import {
   TournamentEntity,
 } from "../../types";
 import { parseTournamentsMatchesAndPlayers } from "./parseTournamentsMatchesAndPlayers";
+import puppeteerClient from "..";
 
 const scrapeTournamentMatchesAndPlayers =
   async (): Promise<ScrapeScheduleResponse> => {
@@ -40,10 +40,7 @@ const scrapeTournamentMatchesAndPlayers =
 
     try {
       // Create a cluster with 10 workers
-      const cluster = await Cluster.launch({
-        concurrency: Cluster.CONCURRENCY_CONTEXT,
-        maxConcurrency: 10,
-      });
+      const cluster = await puppeteerClient();
 
       // Crawl each match main page
       links.map((link) => cluster.queue(link));

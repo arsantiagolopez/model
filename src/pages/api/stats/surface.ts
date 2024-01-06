@@ -113,8 +113,16 @@ export const storeSurfaceStatsOnDb = async (
             const awayDifferential =
               Math.abs(awayWins - awayLosses) > RECORD_DIFFERENTIAL_NUMBER;
 
+            console.log(
+              "😎😎😎 homeDifferential, awayDifferential: ",
+              homeDifferential,
+              awayDifferential
+            );
+
+            // @uncomment – after first few days of January
             // Only consider games where at least one player has a good record
-            if (homeDifferential || awayDifferential) {
+            // if (homeDifferential || awayDifferential) {
+            if (true) {
               const matchPlayerProfilesAndSurfaceRecords: MatchPlayerProfilesAndSurfaceRecords =
                 {
                   match,
@@ -133,6 +141,11 @@ export const storeSurfaceStatsOnDb = async (
         }
       }
     }
+
+    // console.log(
+    //   "😎😎😎 matchesWithAtLeastOneGoodRecord: ",
+    //   matchesWithAtLeastOneGoodRecord
+    // );
 
     // Sort active matches by highest differential in days since last match
     const sortedMatches = matchesWithAtLeastOneGoodRecord

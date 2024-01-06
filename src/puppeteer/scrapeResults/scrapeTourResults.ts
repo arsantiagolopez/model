@@ -1,7 +1,7 @@
 import moment from "moment";
-import { Cluster } from "puppeteer-cluster";
 import { ResultEntity } from "../../types";
 import { parseResults } from "./parseResults";
+import puppeteerClient from "..";
 
 const scrapeTourResults = async (): Promise<ResultEntity[]> => {
   let results: ResultEntity[] = [];
@@ -35,10 +35,7 @@ const scrapeTourResults = async (): Promise<ResultEntity[]> => {
 
   try {
     // Create a cluster with 10 workers
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-    });
+    const cluster = await puppeteerClient();
 
     // Crawl each match main page
     links.map((link) => cluster.queue(link));

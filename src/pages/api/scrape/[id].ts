@@ -13,6 +13,7 @@ import { scrapeTournaments } from "../../../puppeteer/scrapeTournaments";
 import { MatchEntity, PlayerEntity, TournamentEntity } from "../../../types";
 import { dbConnect } from "../../../utils/dbConnect";
 import { updateTest } from "../tests";
+import { storeSurfaceStatsOnDb } from "../stats/surface";
 
 // Main entrance of model. Pupulate initial tournaments, matches, and players.
 export const upsertSchedule = async (
@@ -279,7 +280,7 @@ export const upsertPlayers = async (
 
 // Update existing stats entities with more details.
 export const upsertStats = async (
-  _?: NextApiRequest,
+  req?: NextApiRequest,
   res?: NextApiResponse
 ): Promise<boolean> => {
   let success = true;
@@ -287,6 +288,12 @@ export const upsertStats = async (
   try {
     // Reset stats test
     await updateTest("stats");
+
+    if (req && res) {
+      await storeSurfaceStatsOnDb(req, res);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
 
     // const players: PlayerEntity[] = await Player.find();
 
@@ -306,6 +313,8 @@ export const upsertStats = async (
     // }
 
     // console.log()
+
+    //////////////////////////////////////////////////////////////////////////////////////////
 
     // Scrape was successful
     await updateTest("stats", success);

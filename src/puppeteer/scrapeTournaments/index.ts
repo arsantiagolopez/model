@@ -1,4 +1,3 @@
-import { Cluster } from "puppeteer-cluster";
 import {
   MatchEntity,
   PastYearResult,
@@ -9,6 +8,7 @@ import {
 import { parseStringToDate } from "../../utils/parseStringToDate";
 import { parsePastYears } from "./parsePastYears";
 import { parseTournament } from "./parseTournament";
+import puppeteerClient from "..";
 
 const scrapeTournaments = async (
   links: string[]
@@ -26,10 +26,7 @@ const scrapeTournaments = async (
 
   try {
     // Create a cluster with 10 workers
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-    });
+    const cluster = await puppeteerClient();
 
     // // @test TEST
     // links = [

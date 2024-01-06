@@ -1,10 +1,10 @@
-import { Cluster } from "puppeteer-cluster";
 import { PlayerEntity } from "../../types";
 import { parseInjuries } from "./parseInjuries";
 import { parseLastMatches } from "./parseLastMatches";
 import { parsePastTournamentResults } from "./parsePastTournamentResults";
 import { parseProfile } from "./parseProfile";
 import { parseRecord } from "./parseRecord";
+import puppeteerClient from "..";
 
 /**
  * Scrape detailed information about players.
@@ -21,10 +21,7 @@ const scrapePlayers = async (links: string[]): Promise<PlayerEntity[]> => {
 
   try {
     // Create a cluster with 10 workers
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-    });
+    const cluster = await puppeteerClient();
 
     // // @test TEST
     // links = [

@@ -1,6 +1,6 @@
-import { Cluster } from "puppeteer-cluster";
 import { MatchEntity, PlayerEntity, ScrapeMatchesResponse } from "../../types";
 import { parseMatch } from "./parseMatch";
+import puppeteerClient from "..";
 
 /**
  * Scrape detailed information on tomorrow's matches.
@@ -20,10 +20,7 @@ const scrapeMatches = async (
 
   try {
     // Create a cluster with 10 workers
-    const cluster = await Cluster.launch({
-      concurrency: Cluster.CONCURRENCY_CONTEXT,
-      maxConcurrency: 10,
-    });
+    const cluster = await puppeteerClient();
 
     // // @test TEST
     // links = [
